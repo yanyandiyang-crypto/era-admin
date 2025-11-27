@@ -1,0 +1,36 @@
+/* Custom animations for the incident cards */
+@keyframes pulse-subtle {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 0 5px rgba(59, 130, 246, 0);
+    transform: scale(1.01);
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s infinite;
+}
+
+/* Transition for hover effects */
+.hover-transition {
+  transition: all 0.3s ease;
+}
+
+/* Status badge glow effect */
+@keyframes status-glow {
+  0%, 100% { box-shadow: 0 0 3px rgba(59, 130, 246, 0.3); }
+  50% { box-shadow: 0 0 8px rgba(59, 130, 246, 0.6); }
+}
+
+.status-glow {
+  animation: status-glow 2s infinite;
+}
+
+/* Quick action button hover effect */
+.quick-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}

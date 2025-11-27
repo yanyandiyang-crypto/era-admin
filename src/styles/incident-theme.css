@@ -1,0 +1,190 @@
+/* Incident Management UI Theme
+   A professional color system and design tokens for incident management UI */
+
+:root {
+  /* Core Colors */
+  --color-primary: #1d4ed8;
+  --color-primary-light: #3b82f6;
+  --color-primary-dark: #1e40af;
+  --color-success: #15803d;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+  --color-info: #0369a1;
+  
+  /* Status Colors */
+  --status-pending: #dc2626;
+  --status-verified: #9ca3af;
+  --status-reported: #2563eb;
+  --status-acknowledged: #7c3aed;
+  --status-dispatched: #6366f1; 
+  --status-responding: #f97316;
+  --status-arrived: #22c55e;
+  --status-resolved: #10b981;
+  --status-closed: #3b82f6;
+  --status-cancelled: #f43f5e;
+  --status-spam: #ef4444;
+  
+  /* UI Elements */
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --card-shadow-hover: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  --card-border-radius: 0.75rem;
+  --input-border-radius: 0.5rem;
+  --badge-border-radius: 9999px;
+  
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Typography */
+  --font-family-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Modern Card Styles */
+.incident-card {
+  background: linear-gradient(to bottom right, #ffffff, #f9fafb);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--card-shadow);
+  border: 1px solid #e5e7eb;
+  transition: all var(--transition-normal);
+}
+
+.incident-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: var(--badge-border-radius);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.status-badge--pending {
+  background-color: rgba(220, 38, 38, 0.1);
+  color: var(--status-pending);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.status-badge--verified {
+  background-color: rgba(156, 163, 175, 0.1);
+  color: var(--status-verified);
+  border: 1px solid rgba(156, 163, 175, 0.2);
+}
+
+.status-badge--responding {
+  background-color: rgba(249, 115, 22, 0.1);
+  color: var(--status-responding);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+}
+
+.status-badge--arrived {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: var(--status-arrived);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+/* Info Panels */
+.info-panel {
+  border-radius: var(--card-border-radius);
+  background-color: rgba(249, 250, 251, 0.8);
+  border: 1px solid #e5e7eb;
+  padding: var(--spacing-lg);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+}
+
+/* Icons with background */
+.icon-bg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background-color: rgba(59, 130, 246, 0.1);
+  color: var(--color-primary);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Animated transitions */
+.animated-item {
+  transition: all var(--transition-normal);
+}
+
+.animated-item:hover {
+  transform: translateY(-1px);
+}
+
+/* Data visualization elements */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-md);
+  border-radius: var(--card-border-radius);
+  background: linear-gradient(to bottom right, #ffffff, #f9fafb);
+  border: 1px solid #e5e7eb;
+  box-shadow: var(--card-shadow);
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+/* Action buttons */
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: all var(--transition-fast);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.action-button--primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.action-button--primary:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.action-button--secondary {
+  background-color: white;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+.action-button--secondary:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+/* Enterprise pattern background */
+.enterprise-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3C/g%3E%3C/svg%3E");
+}
