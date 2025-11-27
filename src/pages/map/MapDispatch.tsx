@@ -280,6 +280,9 @@ const createPersonnelMarkerIcon = (color: string, person: Personnel): string => 
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
+// Libraries for Google Maps API
+const GOOGLE_MAPS_LIBRARIES: ("places")[] = ["places"];
+
 // Default center (Basak, Lapu-Lapu City, Cebu)
 const DEFAULT_CENTER = { lat: 10.312, lng: 123.96 };
 
@@ -384,7 +387,7 @@ export default function GoogleMapDispatchPage() {
   const mapRef = useRef<GoogleMap>(null);
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-    libraries: ["places"],
+    libraries: GOOGLE_MAPS_LIBRARIES,
   });
 
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -396,7 +399,6 @@ export default function GoogleMapDispatchPage() {
   const [kebabOpen, setKebabOpen] = useState(false);
   const [layersExpanded, setLayersExpanded] = useState(true);
   const [mapTypeExpanded, setMapTypeExpanded] = useState(false);
-  const [showTraffic, setShowTraffic] = useState(true); // Traffic always active
   const [soundEnabled, setSoundEnabled] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('mapSoundEnabled') !== 'false';
@@ -407,6 +409,9 @@ export default function GoogleMapDispatchPage() {
   const [pingTime, setPingTime] = useState<number | undefined>(undefined);
   const incidentAudioRef = useRef<HTMLAudioElement | null>(null);
   const previousIncidentIdsRef = useRef<Set<string>>(new Set());
+
+  // Traffic is always enabled
+  const showTraffic = true;
 
 
 
@@ -604,7 +609,7 @@ export default function GoogleMapDispatchPage() {
   }, []);
 
   // Fetch personnel - only ON_DUTY and ON_BREAK personnel with location data
-  const fetchPersonnel = async () => {
+  const fetchPersonnel = useCallback(async () => {
     try {
       const response = await personnelService.getPersonnel({
         status: ["ON_DUTY", "ON_BREAK"],
@@ -618,10 +623,10 @@ export default function GoogleMapDispatchPage() {
       // console.error("Failed to fetch personnel:", error);
       setPersonnel([]);
     }
-  };
+  }, []);
 
   // Fetch posts
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     try {
       const response = await barangayService.getBarangays({
         limit: 100,
@@ -633,7 +638,7 @@ export default function GoogleMapDispatchPage() {
       // console.error("Failed to fetch posts:", error);
       setBarangays([]);
     }
-  };
+  }, []);
 
   // Fetch data on mount
   useEffect(() => {
