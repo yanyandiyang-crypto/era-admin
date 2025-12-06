@@ -21,7 +21,7 @@ interface MarkerData {
 const BACKEND_URL = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:3000';
 
 // Helper to get full image URL
-const getImageUrl = (url: string) => {
+const getImageUrl = (url: string | undefined) => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
   return `${BACKEND_URL}${url}`;
@@ -65,7 +65,7 @@ export const MapInfoWindow: React.FC<MapInfoWindowProps> = ({
         disableAutoPan: true,
       }}
     >
-      <div className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-sm border-2 border-gray-500">
+      <div className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-md border-2 border-gray-500">
         <style>{`
           /* Hide scrollbar for Chrome, Safari and Opera */
           .emergency-contacts-scroll::-webkit-scrollbar {
@@ -310,25 +310,127 @@ export const MapInfoWindow: React.FC<MapInfoWindowProps> = ({
         {selectedMarker.type === "personnel" && (
           <div className="p-0">
             {/* Header */}
-            <div className="px-10 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white font-semibold flex items-center gap-2">
-              <span className="text-xl">👤</span>
-              <span>{(selectedMarker.data as Personnel).firstName} {(selectedMarker.data as Personnel).lastName}</span>
-            </div>
-            {/* Content */}
-            <div className="px-4 py-3 space-y-3">
-              <div className="flex items-start gap-3">
-                <User size={18} className="text-blue-500 shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="text-xs text-black-500 font-medium font-weight-bold ">ROLE</p>
-                  <p className="text-sm font-semibold text-black-800">{formatRole((selectedMarker.data as Personnel).role)}</p>
+            <div className="px-10 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white font-semibold flex items-center gap-3">
+              {/* Profile Picture */}
+              <div className="relative">
+                {((selectedMarker.data as Personnel).profilePhoto) ? (
+                  <img
+                    src={getImageUrl((selectedMarker.data as Personnel).profilePhoto)}
+                    alt="Profile"
+                    className="w-10 h-10 rounded-full border-2 border-white/80 object-cover"
+                    onError={(e) => {
+                      // Fallback to initials if image fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const fallbackDiv = target.nextSibling as HTMLElement;
+                      if (fallbackDiv) fallbackDiv.style.display = 'flex';
+                    }}
+                  />
+                ) : null}
+                {/* Fallback initials */}
+                <div
+                  className="w-10 h-10 rounded-full border-2 border-white/80 bg-white/20 text-white font-semibold text-sm flex items-center justify-center"
+                  style={{ display: ((selectedMarker.data as Personnel).profilePhoto) ? 'none' : 'flex' }}
+                >
+                  {(selectedMarker.data as Personnel).firstName?.charAt(0)}
+                  {(selectedMarker.data as Personnel).lastName?.charAt(0)}
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Clock size={18} className="text-green-500 shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="text-xs text-black-500 font-medium font-weight-bold">STATUS</p>
-                  <p className="text-sm font-semibold text-black-800">{formatStatus((selectedMarker.data as Personnel).status)}</p>
+              <span>{(selectedMarker.data as Personnel).firstName} {(selectedMarker.data as Personnel).lastName}</span>
+            </div>
+            {/* Content - Wider Layout */}
+            <div className="px-4 py-3">
+              <div className="grid grid-cols-1 gap-3">
+                <div className="flex flex-wrap gap-3">
+                  {/* Left Column - Role and Status */}
+                  <div className="flex-1 min-w-[120px]">
+                    <div className="mb-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <User size={16} className="text-blue-500" />
+                        <span className="text-xs text-gray-600 font-medium uppercase tracking-wide">Role</span>
+                      </div>
+                      <p className="text-sm font-semibold text-gray-900">{formatRole((selectedMarker.data as Personnel).role)}</p>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Clock size={16} className="text-green-500" />
+                        <span className="text-xs text-gray-600 font-medium uppercase tracking-wide">Status</span>
+                      </div>
+                      <p className="text-sm font-semibold text-gray-900">{formatStatus((selectedMarker.data as Personnel).status)}</p>
+                    </div>
+                  </div>
+
+                  {/* Right Column - ID */}
+                  {(selectedMarker.data as Personnel).employeeId && (
+                    <div className="flex-1 min-w-[120px]">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs text-gray-600 font-medium uppercase tracking-wide">ID</span>
+                      </div>
+                      <p className="text-sm font-mono font-semibold text-gray-800 bg-gray-50 px-2 py-1 rounded inline-block">
+                        {(selectedMarker.data as Personnel).employeeId}
+                      </p>
+                    </div>
+                  )}
                 </div>
+
+                {/* Bottom Row - Contact and Last Seen */}
+                <div className="flex flex-wrap gap-3 border-t border-gray-100 pt-3">
+                  {/* Contact */}
+                  {(selectedMarker.data as Personnel).phone && (
+                    <div className="flex-1 min-w-[140px]">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Phone size={16} className="text-orange-500" />
+                        <span className="text-xs text-gray-600 font-medium uppercase tracking-wide">Contact</span>
+                      </div>
+                      <a
+                        href={`tel:${(selectedMarker.data as Personnel).phone}`}
+                        className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {(selectedMarker.data as Personnel).phone}
+                      </a>
+                    </div>
+                  )}
+
+                  {/* Last Seen */}
+                  {(selectedMarker.data as Personnel).lastLocationUpdate && (
+                    <div className="flex-1 min-w-[140px]">
+                      <div className="flex items-center gap-2 mb-1">
+                        <MapPin size={16} className="text-purple-500" />
+                        <span className="text-xs text-gray-600 font-medium uppercase tracking-wide">Last Seen</span>
+                      </div>
+                      <p className="text-sm font-semibold text-gray-800">
+                        {(() => {
+                          const lastUpdate = (selectedMarker.data as Personnel).lastLocationUpdate;
+                          return lastUpdate ? new Date(lastUpdate).toLocaleString() : 'Unknown';
+                        })()}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            {/* Footer */}
+            <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
+              <div className="flex gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/personnel/${(selectedMarker.data as Personnel).personnelId}`);
+                  }}
+                  className="flex-1 bg-blue-600 text-white text-xs font-semibold px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  View Profile
+                </button>
+                {(selectedMarker.data as Personnel).phone && (
+                  <a
+                    href={`tel:${(selectedMarker.data as Personnel).phone}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex-1 bg-green-600 text-white text-xs font-semibold px-3 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center"
+                  >
+                    Call
+                  </a>
+                )}
               </div>
             </div>
           </div>

@@ -24,6 +24,7 @@ export interface Personnel {
   status: PersonnelStatus;
   dutyStatus: DutyStatus;
   isAvailable: boolean;
+  alertsEnabled: boolean; // Admin can turn off/on personnel receiving incident alerts
 
   // Location
   currentLatitude?: number;

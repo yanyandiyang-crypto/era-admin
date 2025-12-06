@@ -1,10 +1,22 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'sonner';
 import { SocketContext } from './socket-context-internal';
 import type { Notification } from '../types/socket.types';
+import { WS_URL } from '@/lib/constants';
+
+// Pages that handle their own incident alerts (to prevent duplicates)
+const PAGES_WITH_OWN_ALERTS = ['/map', '/dashboard', '/incidents'];
+
+// Priority-based alert configuration
+const PRIORITY_CONFIG: Record<string, { playSound: boolean; toastDuration: number; loopSound: boolean; maxLoopDuration?: number }> = {
+  CRITICAL: { playSound: true, toastDuration: 10000, loopSound: true, maxLoopDuration: 30000 },
+  HIGH: { playSound: true, toastDuration: 6000, loopSound: false },
+  MEDIUM: { playSound: true, toastDuration: 4000, loopSound: false },
+  LOW: { playSound: false, toastDuration: 3000, loopSound: false },
+};
 
 
 
@@ -13,6 +25,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   const [isConnected, setIsConnected] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { accessToken, isAuthenticated } = useAuthStore();
+  const notificationAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated || !accessToken) {
@@ -24,7 +37,12 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     }
 
     // Connect to WebSocket server
-    const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:3000';
+    console.log('🔧 Environment variables available:', {
+      VITE_WS_URL: import.meta.env.VITE_WS_URL,
+      VITE_API_URL: import.meta.env.VITE_API_URL,
+      VITE_BASE_URL: import.meta.env.VITE_BASE_URL,
+    });
+    
     console.log('🔌 Connecting to WebSocket server:', WS_URL);
 
     const newSocket = io(WS_URL, {
@@ -39,22 +57,28 @@ export function SocketProvider({ children }: { children: ReactNode }) {
       timeout: 20000,
     });
 
+    console.log('🔌 Socket.IO client created with config:', {
+      url: WS_URL,
+      auth: { token: accessToken ? 'present' : 'missing' },
+      transports: ['websocket', 'polling'],
+    });
+
     // Connection events
     newSocket.on('connect', () => {
-      // console.log('✅ WebSocket connected');
+      console.log('✅ WebSocket connected with ID:', newSocket.id);
       setIsConnected(true);
       toast.success('Connected to real-time updates', {
         duration: 2000,
       });
     });
 
-    newSocket.on('disconnect', () => {
-      // console.log('❌ WebSocket disconnected');
+    newSocket.on('disconnect', (reason) => {
+      console.log('❌ WebSocket disconnected:', reason);
       setIsConnected(false);
     });
 
-    newSocket.on('connect_error', () => {
-      // console.warn('⚠️ WebSocket connection error:', error.message);
+    newSocket.on('connect_error', (error) => {
+      console.warn('⚠️ WebSocket connection error:', error);
       setIsConnected(false);
       toast.error('Real-time connection failed', {
         description: 'Falling back to manual refresh',
@@ -63,8 +87,10 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     });
 
     // Real-time incident updates
-    newSocket.on('incident:created', (data: { id: string; type: string; location: string }) => {
-      // console.log('🚨 New incident:', data);
+    // Toast and sound are shown here for pages that DON'T have their own handlers
+    // Pages like Map, Dashboard, Incidents handle their own alerts with more context
+    newSocket.on('incident:created', (data: { id: string; type: string; location: string; priority?: string; address?: string; incidentId?: string }) => {
+      console.log('🚨 SocketContext: New incident received:', data);
 
       const notification: Notification = {
         id: `incident-${data.id}-${Date.now()}`,
@@ -76,15 +102,54 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         data,
       };
 
+      // Add to notification list (for notification bell icon)
       setNotifications((prev) => [notification, ...prev]);
 
-      toast.error(notification.title, {
-        description: notification.message,
-        duration: 5000,
-      });
+      // Emit custom event that pages can listen to for consistent handling
+      window.dispatchEvent(new CustomEvent('incident:created:global', { detail: data }));
 
-      // Play sound
-      playNotificationSound();
+      // Check if current page has its own alert handler
+      const currentPath = window.location.pathname;
+      const pageHasOwnHandler = PAGES_WITH_OWN_ALERTS.some(page => currentPath.startsWith(page));
+      
+      console.log('🌐 SocketContext: Current path:', currentPath);
+      console.log('🌐 SocketContext: Page has own handler:', pageHasOwnHandler);
+
+      // Only show toast and play sound if current page doesn't handle its own alerts
+      if (!pageHasOwnHandler) {
+        console.log('🔔 SocketContext: Showing global alert for page without own handler');
+        
+        const priority = data.priority || 'MEDIUM';
+        const config = PRIORITY_CONFIG[priority] || PRIORITY_CONFIG.MEDIUM;
+        
+        // Play notification sound
+        if (config.playSound) {
+          playNotificationSound();
+        }
+
+        // Get location string
+        const locationStr = data.address || data.location || 'Unknown Location';
+        const incidentId = data.incidentId || data.id;
+
+        // Show toast notification
+        const toastType = priority === 'CRITICAL' ? 'error' : 
+                          priority === 'HIGH' ? 'warning' : 'info';
+        
+        const message = priority === 'CRITICAL' ? '🚨 CRITICAL INCIDENT' :
+                        priority === 'HIGH' ? '⚠️ High Priority Incident' :
+                        '📢 New Incident Reported';
+
+        (toast as any)[toastType](message, {
+          description: `${data.type} - ${locationStr}`,
+          duration: config.toastDuration,
+          action: incidentId ? {
+            label: 'View',
+            onClick: () => window.location.href = `/incidents/${incidentId}`,
+          } : undefined,
+        });
+      } else {
+        console.log('⏭️ SocketContext: Skipping global alert (page has own handler)');
+      }
     });
 
     // Personnel alert broadcasts
@@ -159,16 +224,19 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
     // Personnel location updates
     newSocket.on('personnel:location:updated', (data: { personnelId: string; latitude: number; longitude: number; timestamp?: string }) => {
-      console.log('📍 Personnel location updated:', data);
+      console.log('📍 Personnel location updated FROM MOBILE APP:', data);
+      console.log('📍 Broadcasting personnel:location event:', data);
       // Trigger a custom event that the map can listen to
       window.dispatchEvent(new CustomEvent('personnel:location', { detail: data }));
     });
 
-    newSocket.on('incident:updated', (data: { id: string; status: string }) => {
-      // console.log('📝 Incident updated:', data);
+    // NOTE: Individual pages handle their own incident:updated toasts
+    // We only add to notification list here
+    newSocket.on('incident:updated', (data: { id: string; status: string; incidentId?: string }) => {
+      console.log('📝 SocketContext: Incident updated:', data);
 
       const notification: Notification = {
-        id: `incident-update-${data.id}-${Date.now()}`,
+        id: `incident-update-${data.id || data.incidentId}-${Date.now()}`,
         type: 'info',
         title: 'Incident Updated',
         message: `Status changed to ${data.status}`,
@@ -178,18 +246,16 @@ export function SocketProvider({ children }: { children: ReactNode }) {
       };
 
       setNotifications((prev) => [notification, ...prev]);
-
-      toast.info(notification.title, {
-        description: notification.message,
-        duration: 3000,
-      });
+      
+      // Emit custom event for pages
+      window.dispatchEvent(new CustomEvent('incident:updated:global', { detail: data }));
     });
 
-    newSocket.on('incident:resolved', (data: { id: string; type: string }) => {
-      // console.log('✅ Incident resolved:', data);
+    newSocket.on('incident:resolved', (data: { id: string; type: string; incidentId?: string }) => {
+      console.log('✅ SocketContext: Incident resolved:', data);
 
       const notification: Notification = {
-        id: `incident-resolved-${data.id}-${Date.now()}`,
+        id: `incident-resolved-${data.id || data.incidentId}-${Date.now()}`,
         type: 'info',
         title: 'Incident Resolved',
         message: `${data.type} incident has been resolved`,
@@ -338,11 +404,40 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
   const playNotificationSound = () => {
     try {
-      const audio = new Audio('/notification.mp3');
-      audio.volume = 0.7;
-      audio.play().catch((e) => console.warn('Notification sound failed:', e));
+      // Initialize audio element once if not already done
+      if (!notificationAudioRef.current) {
+        const audio = new Audio('/notification.mp3');
+        audio.preload = 'auto';
+        audio.volume = 0.7;
+        audio.loop = false;
+        notificationAudioRef.current = audio;
+        
+        // Handle browser autoplay policy - log for debugging
+        audio.addEventListener('error', (e) => {
+          console.warn('🔊 Audio error:', e.error?.message || 'Unknown error');
+        });
+      }
+      
+      // Reset playback and play
+      const audio = notificationAudioRef.current;
+      if (audio) {
+        audio.currentTime = 0;
+        const playPromise = audio.play();
+        
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log('🔊 Notification sound played successfully');
+            })
+            .catch((e) => {
+              console.warn('🔊 Notification sound play blocked:', e.message);
+              // Browser autoplay policy likely prevented playback
+              // This is expected behavior - sound will play after user interacts
+            });
+        }
+      }
     } catch (error) {
-      console.warn('Notification sound play failed:', error);
+      console.warn('🔊 Notification sound play error:', error);
     }
   };
 

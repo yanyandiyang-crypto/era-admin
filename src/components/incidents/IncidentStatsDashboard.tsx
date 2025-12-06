@@ -106,7 +106,7 @@ export function IncidentStatsDashboard({ refreshTrigger = 0 }: IncidentStatsDash
   // If no stats are available (either from error or missing data), show empty dashboard
   if (!stats && !isLoading) {
     return (
-      <div className="w-full bg-linear-to-br from-white to-gray-50 rounded-xl border border-gray-200 shadow-sm p-6 relative overflow-hidden mb-6">
+      <div className="w-full bg-linear-to-br from-white to-gray-50 rounded-xl border border-gray-200 shadow-sm p-6 relative overflow-hidden">
         {/* Enterprise background pattern */}
         <div className="absolute inset-0 z-0 opacity-[0.03] enterprise-pattern"></div>
         
@@ -170,7 +170,7 @@ export function IncidentStatsDashboard({ refreshTrigger = 0 }: IncidentStatsDash
   ];
 
   return (
-    <div className="w-full bg-white rounded-2xl border border-gray-200/60 shadow-lg overflow-hidden mb-6">
+    <div className="w-full bg-white rounded-2xl border border-gray-200/60 shadow-lg overflow-hidden">
       {/* Main Content */}
       <div className="p-3 bg-linear-to-br from-gray-50/50 to-white">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">

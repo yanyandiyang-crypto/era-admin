@@ -94,7 +94,7 @@ export default function BarangayForm() {
         toast.success("Post created successfully");
       }
 
-      navigate("/post");
+      navigate("/barangays");
     } catch (error: unknown) {
       toast.error((error as any).response?.data?.message || "Failed to save post");
       // console.error(error);
@@ -172,7 +172,8 @@ export default function BarangayForm() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="px-4 lg:px-6 xl:px-8">
+      <div className="space-y-6">
       {/* Header */}
       <section className="w-full">
         <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 rounded-2xl shadow-xl border border-blue-200/20 p-6 sm:p-8 relative overflow-hidden">
@@ -186,8 +187,8 @@ export default function BarangayForm() {
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate("/posts")}
-                className="inline-flex items-center gap-2 whitespace-nowrap font-medium text-xs text-white/90 hover:text-white hover:bg-white/10"
+                onClick={() => navigate("/barangays")}
+                className="inline-flex items-center gap-2 whitespace-nowrap font-medium text-xs text-white/90 hover:text-white hover:bg-white/10 transition-all duration-200 hover:shadow-sm transform hover:scale-105 active:scale-95"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back to List
@@ -246,7 +247,7 @@ export default function BarangayForm() {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="h-12 w-full rounded-2xl border border-blue-200 bg-white px-4 text-sm shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+                  className="h-12 w-full rounded-2xl border border-blue-200 bg-white px-4 text-sm shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 transition-all duration-200 hover:border-blue-300"
                   placeholder="e.g., Post Alpha"
                 />
                 <p className="text-xs text-muted-foreground flex items-center gap-2">
@@ -264,7 +265,7 @@ export default function BarangayForm() {
                   value={formData.description}
                   onChange={handleInputChange}
                   rows={3}
-                  className="w-full rounded-2xl border border-blue-200 bg-white px-4 py-3 text-sm shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+                  className="w-full rounded-2xl border border-blue-200 bg-white px-4 py-3 text-sm shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 transition-all duration-200 hover:border-blue-300 resize-none"
                   placeholder="Brief description of the post"
                 />
               </div>
@@ -280,7 +281,7 @@ export default function BarangayForm() {
                   value={formData.address}
                   onChange={handleInputChange}
                   required
-                  className="h-12 w-full rounded-2xl border border-blue-200 bg-white px-4 text-sm shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+                  className="h-12 w-full rounded-2xl border border-blue-200 bg-white px-4 text-sm shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 transition-all duration-200 hover:border-blue-300"
                   placeholder="Complete address"
                 />
               </div>
@@ -305,7 +306,7 @@ export default function BarangayForm() {
                 variant="outline"
                 size="sm"
                 onClick={openMapDispatch}
-                className="rounded-xl border-blue-200 bg-white/80 text-blue-600 hover:bg-blue-50 shadow-sm"
+                className="rounded-xl border-blue-200 bg-white/80 text-blue-600 hover:bg-blue-50 shadow-sm transition-all duration-200 hover:shadow-md hover:shadow-blue-500/10 transform hover:scale-105 active:scale-95"
               >
                 <MapPin className="h-4 w-4" />
                 Open Map
@@ -329,7 +330,7 @@ export default function BarangayForm() {
                   onChange={handleInputChange}
                   required
                   step="any"
-                  className="h-12 w-full rounded-2xl border border-blue-200/70 bg-white px-4 text-sm shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+                  className="h-12 w-full rounded-2xl border border-blue-200/70 bg-white px-4 text-sm shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 transition-all duration-200 hover:border-blue-300"
                   placeholder="e.g., 10.3157"
                 />
               </div>
@@ -345,7 +346,7 @@ export default function BarangayForm() {
                   onChange={handleInputChange}
                   required
                   step="any"
-                  className="h-12 w-full rounded-2xl border border-blue-200/70 bg-white px-4 text-sm shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+                  className="h-12 w-full rounded-2xl border border-blue-200/70 bg-white px-4 text-sm shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 transition-all duration-200 hover:border-blue-300"
                   placeholder="e.g., 123.8854"
                 />
               </div>
@@ -371,7 +372,7 @@ export default function BarangayForm() {
                 variant="outline"
                 size="sm"
                 onClick={addEmergencyContact}
-                className="rounded-xl border-blue-200 bg-white/80 hover:bg-blue-50/80"
+                className="rounded-xl border-blue-200 bg-white/80 hover:bg-blue-50/80 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/10 transform hover:scale-105 active:scale-95"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Contact
@@ -382,7 +383,7 @@ export default function BarangayForm() {
               {emergencyContacts.map((contact, index) => (
                 <div
                   key={contact.id}
-                  className="rounded-2xl border border-blue-100/70 bg-blue-50/30 p-5 shadow-inner"
+                  className="rounded-2xl border border-blue-100/70 bg-blue-50/30 p-5 shadow-inner transition-all duration-200 hover:shadow-md hover:bg-blue-50/40"
                 >
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-4">
                     <div className="flex items-center gap-3">
@@ -408,7 +409,7 @@ export default function BarangayForm() {
                         <button
                           type="button"
                           onClick={() => setPrimaryContact(contact.id)}
-                          className="inline-flex items-center gap-1 rounded-xl border border-blue-200 px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50/70"
+                          className="inline-flex items-center gap-1 rounded-xl border border-blue-200 px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50/70 transition-all duration-200 hover:shadow-sm transform hover:scale-105 active:scale-95"
                         >
                           Set as Primary
                         </button>
@@ -417,7 +418,7 @@ export default function BarangayForm() {
                         <button
                           type="button"
                           onClick={() => removeEmergencyContact(contact.id)}
-                          className="inline-flex items-center justify-center rounded-xl border border-red-200 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50"
+                          className="inline-flex items-center justify-center rounded-xl border border-red-200 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-all duration-200 hover:shadow-sm transform hover:scale-105 active:scale-95"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -436,7 +437,7 @@ export default function BarangayForm() {
                           updateEmergencyContact(contact.id, "type", e.target.value)
                         }
                         required
-                        className="h-11 w-full rounded-xl border border-blue-100 bg-white px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                        className="h-11 w-full rounded-xl border border-blue-100 bg-white px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 transition-all duration-200 hover:border-blue-200"
                       >
                         <option value="BARANGAYHALL">POST</option>
                         <option value="EMERGENCY">Emergency Hotline</option>
@@ -458,7 +459,7 @@ export default function BarangayForm() {
                           updateEmergencyContact(contact.id, "name", e.target.value)
                         }
                         required
-                        className="h-11 w-full rounded-xl border border-blue-100 bg-white px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                        className="h-11 w-full rounded-xl border border-blue-100 bg-white px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 transition-all duration-200 hover:border-blue-200"
                         placeholder="e.g., POST"
                       />
                     </div>
@@ -474,7 +475,7 @@ export default function BarangayForm() {
                           updateEmergencyContact(contact.id, "phone", e.target.value)
                         }
                         required
-                        className="h-11 w-full rounded-xl border border-blue-100 bg-white px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                        className="h-11 w-full rounded-xl border border-blue-100 bg-white px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 transition-all duration-200 hover:border-blue-200"
                         placeholder="+63 XXX XXX XXXX"
                       />
                     </div>
@@ -489,11 +490,11 @@ export default function BarangayForm() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-6 border-t border-slate-200">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-6 border-t border-slate-200 bg-card/70 rounded-2xl p-6 shadow-inner">
             <Button
               type="submit"
               disabled={isSaving}
-              className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-lg hover:bg-blue-500 disabled:opacity-70"
+              className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-4 text-base font-semibold text-white shadow-lg hover:bg-blue-500 disabled:opacity-70 transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/25 transform hover:scale-[1.02] active:scale-[0.98]"
             >
               {isSaving ? (
                 <>
@@ -510,15 +511,16 @@ export default function BarangayForm() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => navigate("/post")}
+              onClick={() => navigate("/barangays")}
               disabled={isSaving}
-              className="rounded-xl px-6 py-3 text-base font-semibold"
+              className="rounded-xl px-6 py-4 text-base font-semibold transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
             >
               Cancel
             </Button>
           </div>
         </form>
       </div>
+    </div>
     </div>
   );
 }

@@ -139,18 +139,23 @@ export default function Settings() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="px-4 lg:px-6 xl:px-8">
+      <div className="space-y-6">
       {/* Header */}
       <div className="relative overflow-hidden bg-linear-to-br from-blue-600 via-blue-700 to-blue-800 rounded-2xl shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.06),_transparent_50%),_radial-gradient(circle_at_bottom,_rgba(79,70,229,0.12),_transparent_55%)]" />
-        <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -mr-20 -mt-20" />
+        {/* Decorative elements */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.1),_transparent_50%),_radial-gradient(circle_at_bottom,_rgba(99,102,241,0.1),_transparent_50%)]" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24" />
 
         <div className="relative p-6 md:p-8">
-          <div className="flex flex-col gap-3">
-            <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Settings</h1>
-            <p className="text-sm text-blue-100">
-            Manage your account, security, and notification preferences
-            </p>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Settings</h1>
+              <p className="text-blue-100 mt-1 font-medium">
+                Manage your account, security, and notification preferences
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -239,6 +244,7 @@ export default function Settings() {
             />
           )}
         </div>
+      </div>
       </div>
     </div>
   );

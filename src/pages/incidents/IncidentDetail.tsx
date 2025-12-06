@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { incidentService } from "@/services/incident.service";
 import type { Incident } from "@/types/incident.types";
 import { toast } from "sonner";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Clock } from "lucide-react";
 import { useSocket } from "@/hooks/useSocket";
 import { IncidentDetailHeader } from "../../components/incidents/IncidentDetailHeader";
 import { IncidentPersonnelPanel } from "../../components/incidents/IncidentPersonnelPanel";
@@ -230,74 +230,115 @@ export default function IncidentDetail() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <RefreshCw className="h-12 w-12 animate-spin text-blue-600" />
-        <p className="text-gray-500 mt-4">Loading incident details...</p>
+      <div className="px-4 lg:px-6 xl:px-8">
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center space-y-4">
+            <div className="relative">
+              <div className="h-16 w-16 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin mx-auto" />
+              <div className="absolute inset-0 h-16 w-16 border-4 border-transparent border-t-emerald-500 rounded-full animate-spin mx-auto animate-[spin_1.5s_linear_infinite]" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-gray-500 font-medium">Loading incident details...</p>
+              <p className="text-sm text-gray-400">Fetching incident information</p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!incident) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <p className="text-gray-500">Incident not found</p>
+      <div className="px-4 lg:px-6 xl:px-8">
+        <div className="flex flex-col items-center justify-center min-h-[60vh]">
+          <p className="text-gray-500">Incident not found</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      {/* Real-time status indicator - Hidden */}
-      
-      {/* Header */}
-      {/* Header */}
-      <IncidentDetailHeader
-        incident={incident}
-        quickActions={
-          <IncidentQuickActions
-            incident={incident}
-            onVerify={handleVerify}
-            onMarkAsSpam={handleMarkAsSpam}
-            onResolve={handleResolve}
-            onReopen={handleReopen}
-          />
-        }
-      />
+    <div className="px-4 lg:px-6 xl:px-8">
+      <div className="space-y-6">
+        {/* Real-time status indicator - Hidden */}
+        
+        {/* Header */}
+        <IncidentDetailHeader
+          incident={incident}
+          quickActions={
+            <IncidentQuickActions
+              incident={incident}
+              onVerify={handleVerify}
+              onMarkAsSpam={handleMarkAsSpam}
+              onResolve={handleResolve}
+              onReopen={handleReopen}
+            />
+          }
+        />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Column 1: Recent Activity */}
-        <div className="md:col-span-2 lg:col-span-1">
-          <IncidentUpdatesPanel incident={incident} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Column 1: Recent Activity */}
+          <div className="md:col-span-2 lg:col-span-1">
+            <IncidentUpdatesPanel incident={incident} />
+          </div>
+
+          {/* Column 2: Personnel */}
+          <div className="md:col-span-1 lg:col-span-1">
+            {/* New Workflow - Responders Panel */}
+            {(incident.status === "RESPONDING" || incident.status === "ARRIVED" || incident.responders?.length) ? (
+              <IncidentRespondersPanel incident={incident} />
+            ) : (
+              /* Legacy - Assigned Personnel */
+              <IncidentPersonnelPanel incident={incident} />
+            )}
+          </div>
+
+          {/* Column 3: Photos & Media */}
+          <div className="md:col-span-1 lg:col-span-1">
+            <IncidentPhotosPanel
+              incident={incident}
+            />
+          </div>
         </div>
 
-        {/* Column 2: Personnel */}
-        <div className="md:col-span-1 lg:col-span-1">
-          {/* New Workflow - Responders Panel */}
-          {(incident.status === "RESPONDING" || incident.status === "ARRIVED" || incident.responders?.length) ? (
-            <IncidentRespondersPanel incident={incident} />
-          ) : (
-            /* Legacy - Assigned Personnel */
-            <IncidentPersonnelPanel incident={incident} />
-          )}
-        </div>
+        {/* Resolution Review Section - Shows when status is PENDING_RESOLVE */}
+        {incident.status === "PENDING_RESOLVE" && (
+          <div className="mt-4">
+            <ResolutionReview 
+              incidentId={incident.incidentId} 
+              onResolutionConfirmed={() => fetchIncident()}
+            />
+          </div>
+        )}
 
-        {/* Column 3: Photos & Media */}
-        <div className="md:col-span-1 lg:col-span-1">
-          <IncidentPhotosPanel
-            incident={incident}
-          />
+        {/* Enhanced Metadata Footer */}
+        <div className="bg-gradient-to-r from-slate-50 via-gray-50 to-slate-50 border border-slate-200 rounded-xl p-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                <Clock className="h-4 w-4 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">Created</p>
+                <p className="text-slate-700 font-semibold">
+                  {new Date(incident.createdAt).toLocaleString()}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                <RefreshCw className="h-4 w-4 text-green-600" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">Last Updated</p>
+                <p className="text-slate-700 font-semibold">
+                  {new Date(incident.updatedAt).toLocaleString()}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Resolution Review Section - Shows when status is PENDING_RESOLVE */}
-      {incident.status === "PENDING_RESOLVE" && (
-        <div className="mt-4">
-          <ResolutionReview 
-            incidentId={incident.incidentId} 
-            onResolutionConfirmed={() => fetchIncident()}
-          />
-        </div>
-      )}
     </div>
   );
 }

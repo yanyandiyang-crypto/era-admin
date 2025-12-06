@@ -33,21 +33,28 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (credentials: LoginRequest) => {
     set({ isLoading: true, error: null });
     try {
+      console.log('🔐 Attempting login with credentials:', { email: credentials.email });
       const response = await authService.login(credentials);
+      console.log('🔐 Login response:', response);
       
       // Backend returns 'personnel' instead of 'user' for personnel login
       // For web clients, tokens are in httpOnly cookies, not in response body
       const { accessToken, refreshToken, user, personnel } = response.data;
       const userData = user || personnel;
+      console.log('🔐 Login data extracted:', { accessToken: !!accessToken, refreshToken: !!refreshToken, userData });
 
       // Only save tokens if they exist in response (mobile apps)
       // For web clients, tokens are stored in httpOnly cookies by the backend
       if (accessToken && refreshToken) {
+        console.log('🔐 Setting tokens in localStorage');
         localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
         localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+      } else {
+        console.log('🔐 Tokens not in response - using httpOnly cookies');
       }
       
       localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData));
+      console.log('🔐 User data saved to localStorage');
 
       // Update state
       set({

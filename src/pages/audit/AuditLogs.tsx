@@ -188,11 +188,6 @@ export default function AuditLogs() {
     });
   }, [logs, searchTerm, filters.user, filters.status]);
 
-  const totalLogs = total;
-  const failedAttempts = logs.filter(
-    (log) => deriveStatusFromLog(log) === "failed"
-  ).length;
-  const uniqueUsers = new Set(logs.map((log) => getUserDisplay(log))).size;
   const activeFilters =
     (filters.action ? 1 : 0) +
     (filters.resource ? 1 : 0) +
@@ -228,7 +223,8 @@ export default function AuditLogs() {
     setPagination((prev) => ({ ...prev, limit: value, page: 1 }));
   };
 
-  const handleExport = () => {
+
+  const exportToCsv = () => {
     if (filteredLogs.length === 0) {
       toast.info("No logs to export yet.");
       return;
@@ -269,46 +265,35 @@ export default function AuditLogs() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="px-4 lg:px-6 xl:px-8">
+      <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 rounded-2xl shadow-xl border border-blue-200/20 p-5 sm:p-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.1),_transparent_50%),_radial-gradient(circle_at_bottom,_rgba(99,102,241,0.1),_transparent_50%)] pointer-events-none" />
-        <div className="absolute top-0 right-0 w-52 h-52 bg-white/5 rounded-full -mr-28 -mt-28 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/5 rounded-full -ml-20 -mb-20 pointer-events-none" />
+      <div className="relative overflow-hidden bg-linear-to-br from-blue-600 via-blue-700 to-blue-800 rounded-2xl shadow-2xl">
+        {/* Decorative elements */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.1),_transparent_50%),_radial-gradient(circle_at_bottom,_rgba(99,102,241,0.1),_transparent_50%)]" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24" />
 
-        <div className="relative z-20 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-          <div className="flex flex-col gap-3">
-            <div className="text-white">
-              <h1 className="text-3xl font-bold text-white tracking-tight">Audit Logs</h1>
+        <div className="relative p-6 md:p-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Audit Logs</h1>
               <p className="text-blue-100 mt-1 font-medium">
                 Security-grade visibility in one glance
               </p>
             </div>
-            <div className="flex flex-wrap gap-2 text-xs text-blue-100">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1">
-                <span className="text-white font-semibold">{totalLogs}</span>
-                total records
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1">
-                <span className="text-white font-semibold">{failedAttempts}</span>
-                failed attempts
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1">
-                <span className="text-white font-semibold">{uniqueUsers}</span>
-                unique users
-              </span>
+            <div className="flex items-center gap-3">
+              {/* Export Actions */}
+              <Button
+                onClick={exportToCsv}
+                variant="outline"
+                size="sm"
+                className="bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30 hover:text-white"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export CSV
+              </Button>
             </div>
-          </div>
-
-          <div className="flex flex-wrap gap-3 items-center">
-            <Button
-              onClick={handleExport}
-              className="bg-white text-blue-700 hover:bg-blue-50 border-white/20 shadow-lg"
-              size="sm"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export Logs
-            </Button>
           </div>
         </div>
       </div>
@@ -673,6 +658,7 @@ export default function AuditLogs() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

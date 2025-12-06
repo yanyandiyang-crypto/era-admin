@@ -14,6 +14,8 @@ import {
   Upload,
   Trash2,
   X,
+  Bell,
+  BellOff,
 } from "lucide-react";
 import { personnelService } from "@/services/personnel.service";
 import type { Personnel } from "@/types/personnel.types";
@@ -37,6 +39,7 @@ export default function PersonnelDetailPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isTogglingAlerts, setIsTogglingAlerts] = useState(false);
 
   useEffect(() => {
     if (id && id !== 'new') {
@@ -129,12 +132,36 @@ export default function PersonnelDetailPage() {
     }
   };
 
+  const handleToggleAlerts = async () => {
+    if (!id || !personnel) return;
+
+    try {
+      setIsTogglingAlerts(true);
+      const newAlertsEnabled = personnel.alertsEnabled === false ? true : false;
+      const response = await personnelService.toggleAlerts(id, newAlertsEnabled);
+      setPersonnel(response.data);
+      toast.success(`Incident alerts ${newAlertsEnabled ? 'enabled' : 'disabled'} for this personnel`);
+    } catch {
+      toast.error('Failed to toggle alerts');
+    } finally {
+      setIsTogglingAlerts(false);
+    }
+  };
+
   if (isLoading || !personnel) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="h-12 w-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-gray-500 mt-4">Loading personnel details...</p>
+      <div className="px-4 lg:px-6 xl:px-8">
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center space-y-4">
+            <div className="relative">
+              <div className="h-16 w-16 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin mx-auto" />
+              <div className="absolute inset-0 h-16 w-16 border-4 border-transparent border-t-emerald-500 rounded-full animate-spin mx-auto animate-[spin_1.5s_linear_infinite]" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-gray-500 font-medium">Loading personnel details...</p>
+              <p className="text-sm text-gray-400">Fetching personnel information</p>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -187,30 +214,84 @@ export default function PersonnelDetailPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => navigate("/personnel")}
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Personnel
-        </Button>
-        <div className="flex gap-2">
-          <Button size="sm" onClick={() => navigate(`/personnel/${id}/edit`)}>
-            <Edit className="h-4 w-4 mr-2" />
-            Edit Profile
-          </Button>
+    <div className="px-4 lg:px-6 xl:px-8">
+      <div className="space-y-6">
+      {/* Enhanced Header with Modern Button Design */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100/80 p-4">
+        <div className="flex items-center justify-between">
+          {/* Enhanced Back Button */}
           <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => setShowDeleteConfirm(true)}
+            variant="outline"
+            size="default"
+            onClick={() => navigate("/personnel")}
+            className="bg-white/90 hover:bg-white border-blue-200 hover:border-blue-300 text-blue-700 hover:text-blue-800 shadow-md hover:shadow-lg transition-all duration-200 rounded-xl font-medium gap-2"
           >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Delete Account
+            <ArrowLeft className="h-5 w-5" />
+            Back to Personnel
           </Button>
+
+          {/* Enhanced Action Buttons */}
+          <div className="flex items-center gap-3">
+            {/* Alerts Toggle Button */}
+            <Button
+              size="default"
+              variant={personnel.alertsEnabled !== false ? "outline" : "default"}
+              onClick={handleToggleAlerts}
+              disabled={isTogglingAlerts}
+              className={`relative overflow-hidden transition-all duration-200 rounded-xl font-medium shadow-md hover:shadow-lg gap-2 transform hover:scale-[1.02] active:scale-[0.98] group ${
+                personnel.alertsEnabled !== false
+                  ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 hover:border-green-300 text-green-700 hover:text-green-800 hover:from-green-100 hover:to-emerald-100'
+                  : 'bg-gradient-to-r from-red-50 to-rose-50 border-red-200 hover:border-red-300 text-red-700 hover:text-red-800 hover:from-red-100 hover:to-rose-100'
+              }`}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              <div className="flex items-center justify-center gap-2 relative z-10">
+                {isTogglingAlerts ? (
+                  <>
+                    <div className="h-5 w-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    <span>Updating...</span>
+                  </>
+                ) : personnel.alertsEnabled !== false ? (
+                  <>
+                    <Bell className="h-5 w-5 group-hover:rotate-12 transition-transform duration-200" />
+                    <span>Alerts On</span>
+                  </>
+                ) : (
+                  <>
+                    <BellOff className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
+                    <span>Alerts Off</span>
+                  </>
+                )}
+              </div>
+            </Button>
+
+            {/* Edit Profile Button */}
+            <Button
+              size="default"
+              onClick={() => navigate(`/personnel/${id}/edit`)}
+              className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 rounded-xl font-medium gap-2 transform hover:scale-[1.02] active:scale-[0.98] group"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              <div className="flex items-center justify-center gap-2 relative z-10">
+                <Edit className="h-5 w-5 group-hover:rotate-12 transition-transform duration-200" />
+                <span>Edit Profile</span>
+              </div>
+            </Button>
+
+            {/* Delete Account Button */}
+            <Button
+              size="default"
+              variant="destructive"
+              onClick={() => setShowDeleteConfirm(true)}
+              className="relative overflow-hidden bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg shadow-red-500/25 hover:shadow-red-500/40 transition-all duration-300 rounded-xl font-medium gap-2 transform hover:scale-[1.02] active:scale-[0.98] group"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              <div className="flex items-center justify-center gap-2 relative z-10">
+                <Trash2 className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
+                <span>Delete Account</span>
+              </div>
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -298,9 +379,9 @@ export default function PersonnelDetailPage() {
 
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-            <div className="bg-blue-50 rounded-lg p-4">
+            <div className="group bg-blue-50 rounded-lg p-4 hover:shadow-md transition-all duration-300 hover:scale-102 hover:shadow-blue-500/20">
               <div className="flex items-center gap-2 text-blue-600 mb-2">
-                <Activity className="h-5 w-5" />
+                <Activity className="h-5 w-5 group-hover:rotate-12 transition-transform duration-200" />
                 <span className="text-sm font-medium">Incidents</span>
               </div>
               <p className="text-2xl font-bold text-gray-900">
@@ -308,9 +389,9 @@ export default function PersonnelDetailPage() {
               </p>
             </div>
 
-            <div className="bg-green-50 rounded-lg p-4">
+            <div className="group bg-green-50 rounded-lg p-4 hover:shadow-md transition-all duration-300 hover:scale-102 hover:shadow-green-500/20">
               <div className="flex items-center gap-2 text-green-600 mb-2">
-                <Clock className="h-5 w-5" />
+                <Clock className="h-5 w-5 group-hover:rotate-12 transition-transform duration-200" />
                 <span className="text-sm font-medium">Avg Response</span>
               </div>
               <p className="text-2xl font-bold text-gray-900">
@@ -321,9 +402,9 @@ export default function PersonnelDetailPage() {
               </p>
             </div>
 
-            <div className="bg-purple-50 rounded-lg p-4">
+            <div className="group bg-purple-50 rounded-lg p-4 hover:shadow-md transition-all duration-300 hover:scale-102 hover:shadow-purple-500/20">
               <div className="flex items-center gap-2 text-purple-600 mb-2">
-                <Award className="h-5 w-5" />
+                <Award className="h-5 w-5 group-hover:rotate-12 transition-transform duration-200" />
                 <span className="text-sm font-medium">Rating</span>
               </div>
               <p className="text-2xl font-bold text-gray-900">
@@ -334,9 +415,9 @@ export default function PersonnelDetailPage() {
               </p>
             </div>
 
-            <div className="bg-orange-50 rounded-lg p-4">
+            <div className="group bg-orange-50 rounded-lg p-4 hover:shadow-md transition-all duration-300 hover:scale-102 hover:shadow-orange-500/20">
               <div className="flex items-center gap-2 text-orange-600 mb-2">
-                <TrendingUp className="h-5 w-5" />
+                <TrendingUp className="h-5 w-5 group-hover:rotate-12 transition-transform duration-200" />
                 <span className="text-sm font-medium">Duty Status</span>
               </div>
               <p className="text-lg font-bold text-gray-900">
@@ -350,9 +431,11 @@ export default function PersonnelDetailPage() {
       {/* Info Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Personnel Information */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-300">
           <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <Phone className="h-5 w-5 text-blue-600" />
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 shadow-sm flex items-center justify-center">
+              <Phone className="h-5 w-5 text-blue-600" />
+            </div>
             Personnel Information
           </h2>
           <div className="space-y-4">
@@ -404,9 +487,11 @@ export default function PersonnelDetailPage() {
         </div>
 
         {/* Location & Location History */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-300">
           <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-blue-600" />
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 shadow-sm flex items-center justify-center">
+              <MapPin className="h-5 w-5 text-blue-600" />
+            </div>
             Location Tracking
           </h2>
 
@@ -459,9 +544,10 @@ export default function PersonnelDetailPage() {
                 {locationHistory.map((location, index) => (
                   <div
                     key={location.id}
-                    className={`p-3 rounded-lg border ${index === 0
-                        ? 'bg-green-50 border-green-200'
-                        : 'bg-gray-50 border-gray-200'
+                    className={`p-3 rounded-lg border transition-all duration-200 hover:shadow-md group ${
+                      index === 0
+                        ? 'bg-green-50 border-green-200 hover:bg-green-100/80'
+                        : 'bg-gray-50 border-gray-200 hover:bg-gray-100/80'
                       }`}
                   >
                     <div className="flex items-start justify-between">
@@ -496,6 +582,34 @@ export default function PersonnelDetailPage() {
                 </p>
               </div>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* Enhanced Metadata Footer */}
+      <div className="bg-gradient-to-r from-slate-50 via-gray-50 to-slate-50 border border-slate-200 rounded-xl p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+              <Clock className="h-4 w-4 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">Created</p>
+              <p className="text-slate-700 font-semibold">
+                {new Date(personnel.createdAt).toLocaleString()}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+              <Edit className="h-4 w-4 text-green-600" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">Last Updated</p>
+              <p className="text-slate-700 font-semibold">
+                {new Date(personnel.updatedAt).toLocaleString()}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -558,6 +672,7 @@ export default function PersonnelDetailPage() {
         </div>
       )}
 
+    </div>
     </div>
   );
 }

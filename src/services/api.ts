@@ -21,8 +21,8 @@ api.interceptors.request.use(
     const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
     // Debug: log whether token exists and the request being made
     try {
-      // eslint-disable-next-line no-console
-      // console.log(`[api] request -> ${config.method || 'GET'} ${config.url} | token: ${token ? (token === 'cookie-based' ? 'cookie-based' : 'present') : 'missing'}`);
+      console.log(`[api] request -> ${config.method || 'GET'} ${config.url} | token: ${token ? (token === 'cookie-based' ? 'cookie-based' : 'present') : 'missing'}`);
+      console.log('Available localStorage keys:', Object.keys(localStorage));
     } catch {
       // ignore logging errors
     }

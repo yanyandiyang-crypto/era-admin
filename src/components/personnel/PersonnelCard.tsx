@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { MapPin, Phone, Clock, Mail, Activity } from "lucide-react";
+import { MapPin, Phone, Clock, Mail, Activity, Bell, BellOff } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import type { Personnel, PersonnelRole, PersonnelStatus, DutyStatus } from "@/types/personnel.types";
 import { getImageUrl } from "@/lib/constants";
@@ -122,6 +122,24 @@ export function PersonnelCard({ person }: PersonnelCardProps) {
           </span>
           <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${getStatusColor(person.status)}`}>
             {person.status?.replace("_", " ") || "N/A"}
+          </span>
+          {/* Alert Status Badge */}
+          <span className={`px-3 py-1 text-xs font-semibold rounded-full border flex items-center gap-1 ${
+            person.alertsEnabled !== false 
+              ? "bg-green-100 text-green-700 border-green-200" 
+              : "bg-red-100 text-red-700 border-red-200"
+          }`}>
+            {person.alertsEnabled !== false ? (
+              <>
+                <Bell className="h-3 w-3" />
+                Alerts On
+              </>
+            ) : (
+              <>
+                <BellOff className="h-3 w-3" />
+                Alerts Off
+              </>
+            )}
           </span>
         </div>
 

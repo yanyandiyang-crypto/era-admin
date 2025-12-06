@@ -170,7 +170,7 @@ export function GlobalSearch() {
   };
 
   return (
-    <div ref={searchRef} className="relative">
+    <div ref={searchRef} className="relative" data-global-search>
       {/* Search Trigger / Input */}
       {!isExpanded ? (
         <button

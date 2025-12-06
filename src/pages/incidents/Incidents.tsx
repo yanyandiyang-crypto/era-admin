@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { incidentService } from "@/services/incident.service";
 import type { Incident, IncidentFilters, IncidentStatus } from "@/types/incident.types";
 import { useSocket } from "@/hooks/useSocket";
+import { useIncidentAlert } from "@/hooks/useIncidentAlert";
 // import { ConnectionStatus } from "@/components/ui/connection-status";
 import { toast } from "sonner";
 import { IncidentHeader } from "@/components/incidents/IncidentHeader";
@@ -70,6 +71,7 @@ const getPriorityConfig = (priority: string, type: string) => {
 export default function IncidentsListPage() {
   // Navigation will be added back when needed
   const { socket, isConnected } = useSocket();
+  const incidentAlert = useIncidentAlert();
   const listContainerRef = useRef<HTMLDivElement | null>(null);
   const [flashIds, setFlashIds] = useState<Set<string>>(new Set());
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -353,59 +355,54 @@ export default function IncidentsListPage() {
 
       // Update refresh trigger for statistics
       setRefreshTrigger(prev => prev + 1);
-    };    // Enhance: when a critical incident arrives, play alert, flash and scroll
-    const handleCriticalAlert = (incident: Incident) => {
+    };
+
+    // Handle new incident with centralized alert
+    const handleNewIncidentAlert = (incident: Incident) => {
       try {
-        if (incident.priority === 'CRITICAL') {
-          // Play a short alert tone
-          try {
-            const audio = new Audio('/notification.mp3');
-            audio.volume = 0.8;
-            audio.play().catch(() => undefined);
-          } catch (e) {
-            // ignore
-          }
+        // Use centralized alert hook for sound + toast
+        incidentAlert.handleNewIncident(incident);
 
-          const id = incident.incidentId;
-          if (id) {
-            setFlashIds(prev => new Set(Array.from(prev).concat(id)));
+        const id = incident.incidentId;
+        if (id) {
+          // Flash the incident card
+          setFlashIds(prev => new Set(Array.from(prev).concat(id)));
 
-            // Remove flash state after 12s
-            setTimeout(() => {
-              setFlashIds(prev => {
-                const copy = new Set(prev);
-                copy.delete(id);
-                return copy;
-              });
-            }, 12000);
+          // Remove flash state after 12s
+          setTimeout(() => {
+            setFlashIds(prev => {
+              const copy = new Set(prev);
+              copy.delete(id);
+              return copy;
+            });
+          }, 12000);
 
-            // Scroll container to top so the new incident is visible
-            setTimeout(() => {
-              try {
-                if (listContainerRef.current) {
-                  listContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-                } else {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-              } catch (e) {
-                // ignore
+          // Scroll container to top so the new incident is visible
+          setTimeout(() => {
+            try {
+              if (listContainerRef.current) {
+                listContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }
-            }, 100);
-          }
+            } catch {
+              // ignore
+            }
+          }, 100);
         }
-      } catch (e) {
+      } catch {
         // ignore
       }
     };
 
     const handleIncidentInvalidated = (data: { incidentId: string }) => {
-      // console.log('⛔ Real-time incident invalidated:', data);
+      console.log('⛔ Real-time incident invalidated:', data);
       setIncidents((prev) => prev.filter(i => i.incidentId !== data.incidentId));
       setRefreshTrigger(prev => prev + 1);
     };
 
     const handleIncidentUpdated = (incident: Incident) => {
-      // console.log('📝 Real-time incident update:', incident);
+      console.log('📝 Real-time incident update:', incident);
 
       // Update the incident in the list
       setIncidents((prev) => {
@@ -433,7 +430,7 @@ export default function IncidentsListPage() {
 
       // Update refresh trigger for statistics
       setRefreshTrigger(prev => prev + 1);
-          };
+    };
 
     const handleIncidentDeleted = (incidentId: string) => {
       // console.log('🗑️ Real-time incident deletion:', incidentId);
@@ -449,12 +446,24 @@ export default function IncidentsListPage() {
       setRefreshTrigger(prev => prev + 1);
           };
 
-    const handleIncidentStatusChanged = (_data: { incidentId: string; status: string }) => {
-      // console.log('🔄 Real-time status change:', _data);
+    const handleIncidentStatusChanged = (data: { incidentId?: string; id?: string; status: string }) => {
+      console.log('🔄 Real-time status change:', data);
+      
+      const incidentId = data.incidentId || data.id;
+      if (!incidentId) return;
 
-      // If we already received the full updated incident via incident:updated, no need to handle this
-      // This is just an additional event with more specific data
-          };
+      // Update the incident status in the list
+      setIncidents((prev) =>
+        prev.map((incident) =>
+          incident.incidentId === incidentId
+            ? { ...incident, status: data.status as IncidentStatus }
+            : incident
+        )
+      );
+
+      // Update refresh trigger for statistics
+      setRefreshTrigger(prev => prev + 1);
+    };
 
     const handleIncidentResolved = (data: { incidentId: string }) => {
       // console.log('✅ Real-time incident resolved:', data);
@@ -474,16 +483,27 @@ export default function IncidentsListPage() {
 
       // Update refresh trigger for statistics
       setRefreshTrigger(prev => prev + 1);
-          };
+    };
 
     // Register socket event listeners
     socket.on('incident:created', handleIncidentCreated);
-    socket.on('incident:created', handleCriticalAlert);
+    socket.on('incident:created', handleNewIncidentAlert);
     socket.on('incident:updated', handleIncidentUpdated);
     socket.on('incident:deleted', handleIncidentDeleted);
     socket.on('incident:status', handleIncidentStatusChanged);
+    socket.on('incident:status-changed', handleIncidentStatusChanged);  // Backend uses this event name
     socket.on('incident:resolved', handleIncidentResolved);
     socket.on('incident:invalidated', handleIncidentInvalidated);
+    
+    // Listen for real-time personnel response updates from socket
+    socket.on('incident:assigned', (data) => {
+      // Trigger personnel response update when incident is assigned
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('personnel:response', {
+          detail: { incidentId: data.incidentId, responderCount: data.responderCount || 1 }
+        }));
+      }, 1000);
+    });
 
     // Update connection status display
     if (isConnected) {
@@ -495,14 +515,15 @@ export default function IncidentsListPage() {
 
     return () => {
       socket.off('incident:created', handleIncidentCreated);
-      socket.off('incident:created', handleCriticalAlert);
+      socket.off('incident:created', handleNewIncidentAlert);
       socket.off('incident:updated', handleIncidentUpdated);
       socket.off('incident:deleted', handleIncidentDeleted);
       socket.off('incident:status', handleIncidentStatusChanged);
       socket.off('incident:resolved', handleIncidentResolved);
       socket.off('incident:invalidated', handleIncidentInvalidated);
+      socket.off('incident:assigned', () => {});
     };
-  }, [socket, isConnected, shouldIncidentBeDisplayed, showResolved]);
+  }, [socket, isConnected, shouldIncidentBeDisplayed, showResolved, incidentAlert]);
 
 
 
@@ -543,62 +564,53 @@ export default function IncidentsListPage() {
     }
   };
 
+
   return (
-    <div className="min-h-screen w-full">
-      {/* Incident Header - Moved Above Statistics Dashboard */}
-      <IncidentHeader
-        isLoading={isLoading}
-        onRefresh={fetchIncidents}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-      />
+    <div className="px-4 lg:px-6 xl:px-8">
+      <div className="space-y-6">
+        {/* Incident Header */}
+        <IncidentHeader
+          isLoading={isLoading}
+          onRefresh={fetchIncidents}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+        />
 
-      {/* Connection Status - Hidden */}
-      {/* <div className="px-6 mb-4 flex justify-end">
-        <ConnectionStatus />
-      </div> */}
-
-      {/* Statistics Dashboard */}
-      <div className="px-6">
+        {/* Statistics Dashboard */}
         <IncidentStatsDashboard refreshTrigger={refreshTrigger} />
-      </div>
 
-      {/* Search and Filters */}
-      <div className="px-6">
+        {/* Search and Filters */}
         <IncidentSearchBar
-        filters={filters}
-        showFilters={showFilters}
-        onToggleFilters={() => setShowFilters(!showFilters)}
-        onFilterChange={setFilters}
-        onApply={applyFilters}
-        onClear={clearFilters}
-        onSearchKeyPress={(e) => e.key === "Enter" && applyFilters()}
-      />
-      </div>
+          filters={filters}
+          showFilters={showFilters}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+          onFilterChange={setFilters}
+          onApply={applyFilters}
+          onClear={clearFilters}
+          onSearchKeyPress={(e) => e.key === "Enter" && applyFilters()}
+        />
 
-      {/* Toggle Options - Hidden */}
-      {/* Settings panel hidden as requested */}
-
-      {/* Incidents Display */}
-      <div className="px-6 pb-6" ref={listContainerRef}>
-        {viewMode === "list" ? (
-          <IncidentTable
-            incidents={incidents}
-            isLoading={isLoading}
-            selectedIds={selectedIds}
-            onToggleSelectAll={toggleSelectAll}
-            flashIds={flashIds}
-          />
-        ) : (
-          <IncidentGrid
-            incidents={incidents}
-            isLoading={isLoading}
-            selectedIds={selectedIds}
-            onToggleSelect={toggleSelect}
-            onRefresh={fetchIncidents}
-            flashIds={flashIds}
-          />
-        )}
+        {/* Incidents Display */}
+        <div ref={listContainerRef}>
+          {viewMode === "list" ? (
+            <IncidentTable
+              incidents={incidents}
+              isLoading={isLoading}
+              selectedIds={selectedIds}
+              onToggleSelectAll={toggleSelectAll}
+              flashIds={flashIds}
+            />
+          ) : (
+            <IncidentGrid
+              incidents={incidents}
+              isLoading={isLoading}
+              selectedIds={selectedIds}
+              onToggleSelect={toggleSelect}
+              onRefresh={fetchIncidents}
+              flashIds={flashIds}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

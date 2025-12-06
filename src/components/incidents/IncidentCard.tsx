@@ -179,6 +179,23 @@ export function IncidentCard({ incident, onRefresh, isFlashing }: IncidentCardPr
     };
   }, [incident.incidentId]);
 
+  // Listen for real-time personnel response updates
+  useEffect(() => {
+    const handlePersonnelResponse = (event: CustomEvent) => {
+      const { incidentId } = event.detail;
+      if (getId() === incidentId) {
+        // Trigger a refresh to get updated responder count
+        onRefresh?.();
+      }
+    };
+
+    window.addEventListener('personnel:response', handlePersonnelResponse as EventListener);
+
+    return () => {
+      window.removeEventListener('personnel:response', handlePersonnelResponse as EventListener);
+    };
+  }, [incident.incidentId, onRefresh]);
+
   // Determine visual classes: pulse if new OR externally flashed
   const shouldPulse = isNew || externalFlash;
   const ringClass = externalFlash || incident.priority === "CRITICAL" ? "ring-2 ring-red-300/60" : (isNew ? "ring-2 ring-blue-200/50" : "");
@@ -236,6 +253,7 @@ export function IncidentCard({ incident, onRefresh, isFlashing }: IncidentCardPr
             } ${
               incident.status === 'RESPONDING' ? 'from-orange-500 to-orange-600 text-white border-orange-600' :
               incident.status === 'ARRIVED' ? 'from-green-500 to-green-600 text-white border-green-600' :
+              incident.status === 'IN_PROGRESS' ? 'from-purple-500 to-purple-600 text-white border-purple-600' :
               incident.status === 'RESOLVED' ? 'from-emerald-500 to-emerald-600 text-white border-emerald-600' :
               incident.status === 'PENDING_VERIFICATION' ? 'from-red-500 to-red-600 text-white border-red-600' :
               incident.status === 'PENDING_RESOLVE' ? 'from-yellow-400 to-yellow-500 text-black border-yellow-500' :

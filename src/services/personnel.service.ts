@@ -231,4 +231,16 @@ export const personnelService = {
     );
     return response.data;
   },
+
+  // Toggle personnel alerts (admin only)
+  toggleAlerts: async (
+    id: string,
+    enabled: boolean
+  ): Promise<ApiResponse<Personnel>> => {
+    const response = await api.patch<ApiResponse<Personnel>>(
+      `/personnel/${id}/alerts`,
+      { enabled }
+    );
+    return response.data;
+  },
 };

@@ -11,7 +11,9 @@ import {
   MapPin, 
   User, 
   Phone,
-  Calendar
+  Calendar,
+  ShieldX,
+  AlertTriangle
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
@@ -122,6 +124,36 @@ export function IncidentDetailHeader({ incident, quickActions }: IncidentDetailH
                             {incident.description}
                           </p>
                         </div>
+
+                        {/* Spam/Invalid Notice with Notes */}
+                        {incident.status === "SPAM" && (
+                          <div className="mt-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-4 border border-red-200 shadow-sm">
+                            <div className="flex items-start gap-3">
+                              <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <ShieldX className="h-5 w-5 text-red-600" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <h3 className="text-sm font-bold text-red-800">Marked as Spam/Invalid</h3>
+                                  <Badge variant="outline" className="bg-red-100 text-red-700 border-red-300 text-xs">
+                                    No Personnel Notified
+                                  </Badge>
+                                </div>
+                                {incident.notes && (
+                                  <div className="bg-white/60 rounded-lg p-3 border border-red-100">
+                                    <p className="text-xs font-semibold text-red-600 uppercase tracking-wide mb-1 flex items-center gap-1">
+                                      <AlertTriangle className="h-3 w-3" />
+                                      Reason
+                                    </p>
+                                    <p className="text-sm text-red-900 font-medium whitespace-pre-wrap">
+                                      {incident.notes}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -160,10 +192,22 @@ export function IncidentDetailHeader({ incident, quickActions }: IncidentDetailH
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 bg-green-500/20 px-3 py-1.5 rounded-full border border-green-400/30 backdrop-blur-sm">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-xs font-bold text-green-100 uppercase tracking-wide">Active Incident</span>
-                </div>
+                {incident.status === "SPAM" ? (
+                  <div className="flex items-center gap-2 bg-red-500/20 px-3 py-1.5 rounded-full border border-red-400/30 backdrop-blur-sm">
+                    <ShieldX className="w-3.5 h-3.5 text-red-300" />
+                    <span className="text-xs font-bold text-red-100 uppercase tracking-wide">Invalid/Spam</span>
+                  </div>
+                ) : incident.status === "RESOLVED" ? (
+                  <div className="flex items-center gap-2 bg-blue-500/20 px-3 py-1.5 rounded-full border border-blue-400/30 backdrop-blur-sm">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <span className="text-xs font-bold text-blue-100 uppercase tracking-wide">Resolved</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 bg-green-500/20 px-3 py-1.5 rounded-full border border-green-400/30 backdrop-blur-sm">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-xs font-bold text-green-100 uppercase tracking-wide">Active Incident</span>
+                  </div>
+                )}
               </div>
             </div>
 

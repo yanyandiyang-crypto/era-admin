@@ -71,9 +71,6 @@ export default function BarangayList() {
     return matchesSearch && matchesStatus;
   });
 
-  // Compute emergency contacts count: prefer stats from API, otherwise sum loaded barangays
-  const emergencyContactsCount = stats?.totalEmergencyContacts ?? barangays.reduce((acc, b) => acc + (b.emergencyContacts?.length || 0), 0);
-
   const handleDelete = async (barangayId: string) => {
     const barangayName = barangays.find(b => b.id === barangayId)?.name || "this post";
     
@@ -115,6 +112,9 @@ export default function BarangayList() {
     }
   };
 
+  // Compute emergency contacts count: prefer stats from API, otherwise sum loaded barangays
+  const emergencyContactsCount = stats?.totalEmergencyContacts ?? barangays.reduce((acc, b) => acc + (b.emergencyContacts?.length || 0), 0);
+
   const handleSearch = () => {
     fetchBarangays();
   };
@@ -132,7 +132,8 @@ export default function BarangayList() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="px-4 lg:px-6 xl:px-8">
+      <div className="space-y-6">
       {/* Modern Blue Header Board */}
       <div className="relative overflow-hidden bg-linear-to-br from-blue-600 via-blue-700 to-blue-800 rounded-2xl shadow-2xl">
         {/* Decorative elements */}
@@ -280,9 +281,15 @@ export default function BarangayList() {
       {/* Content */}
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="text-center">
-            <div className="h-12 w-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-gray-500 mt-4">Loading barangays...</p>
+          <div className="text-center space-y-4">
+            <div className="relative">
+              <div className="h-16 w-16 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin mx-auto" />
+              <div className="absolute inset-0 h-16 w-16 border-4 border-transparent border-t-emerald-500 rounded-full animate-spin mx-auto animate-[spin_1.5s_linear_infinite]" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-gray-500 font-medium">Loading barangays...</p>
+              <p className="text-sm text-gray-400">Fetching emergency response posts</p>
+            </div>
           </div>
         </div>
       ) : viewMode === "grid" ? (
@@ -291,34 +298,24 @@ export default function BarangayList() {
           {filteredBarangays.map((barangay) => (
             <div
               key={barangay.id}
-              className="group bg-white rounded-xl shadow-sm border border-gray-200/80 hover:shadow-xl hover:shadow-blue-500/10 hover:border-blue-200/50 transition-all duration-300 hover:scale-[1.02] overflow-hidden"
+              className="group bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/60 hover:shadow-2xl hover:shadow-blue-500/20 hover:border-blue-300/60 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 overflow-hidden relative"
             >
-              {/* Status Indicator Stripe */}
-              <div
-                className={`h-1 w-full ${
-                  barangay.status === "ACTIVE"
-                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600"
-                    : "bg-gradient-to-r from-gray-300 to-gray-400"
-                }`}
-              />
+              {/* Animated background gradient on hover */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50/0 via-transparent to-blue-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-              <div className="p-6 space-y-5">
-                {/* Enhanced Header */}
+              {/* Enhanced top accent bar */}
+              <div className={`h-1.5 w-full bg-gradient-to-r transition-all duration-300 ${
+                barangay.status === 'ACTIVE'
+                  ? 'from-emerald-400 via-emerald-500 to-emerald-600 group-hover:scale-x-110 origin-left'
+                  : 'from-gray-300 via-gray-400 to-gray-500 group-hover:scale-x-110 origin-left'
+              }`}></div>
+              <div className="relative z-10 p-6 space-y-5">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="p-2 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg group-hover:from-blue-200 group-hover:to-blue-300 transition-colors duration-300">
+                      <div className="p-2 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg group-hover:from-blue-200 group-hover:to-blue-300 transition-all duration-300 shadow-sm group-hover:shadow-md">
                         <MapPin className="h-5 w-5 text-blue-600" />
                       </div>
-                      <span
-                        className={`px-2.5 py-1 text-xs font-bold rounded-full shadow-sm ${
-                          barangay.status === "ACTIVE"
-                            ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
-                            : "bg-gray-100 text-gray-700 border border-gray-200"
-                        }`}
-                      >
-                        {barangay.status}
-                      </span>
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 mb-1 group-hover:text-blue-900 transition-colors duration-200 line-clamp-1">
                       {barangay.name}
@@ -339,26 +336,26 @@ export default function BarangayList() {
                 )}
 
                 {/* Enhanced Emergency Contacts */}
-                <div className="bg-gradient-to-br from-red-50 via-red-50/80 to-rose-50 border border-red-100 rounded-xl p-4 shadow-sm">
+                <div className="bg-gradient-to-br from-red-50/60 via-red-50/40 to-rose-50/60 backdrop-blur-sm border border-red-100/70 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-300">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="p-1.5 bg-red-100 rounded-full">
+                    <div className="p-2 bg-gradient-to-br from-red-100 to-red-200 rounded-full shadow-sm group-hover:shadow-md transition-all duration-200">
                       <Phone className="h-4 w-4 text-red-600" />
                     </div>
-                    <span className="text-sm font-semibold text-red-700">Emergency Contacts</span>
+                    <span className="text-sm font-bold text-red-800 group-hover:text-red-900 transition-colors duration-200">Emergency Contacts</span>
                     <div className="ml-auto flex items-center gap-2">
-                      <span className="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded-full">
+                      <span className="text-xs font-extrabold text-red-700 bg-gradient-to-r from-red-100 to-red-200 px-3 py-1.5 rounded-full shadow-sm border border-red-200 group-hover:shadow-md transition-all duration-200">
                         {barangay.emergencyContacts?.length || 0}
                       </span>
                       {barangay.emergencyContacts && barangay.emergencyContacts.length > 2 && (
                         <button
                           onClick={() => toggleExpandedContacts(barangay.id)}
-                          className="p-1 hover:bg-red-100 rounded-md transition-colors duration-200"
+                          className="p-1.5 hover:bg-red-100/80 rounded-lg transition-all duration-200 hover:scale-110 shadow-sm hover:shadow-md group"
                           title={expandedContacts.has(barangay.id) ? "Collapse contacts" : "Expand contacts"}
                         >
                           {expandedContacts.has(barangay.id) ? (
-                            <ChevronUp className="h-3 w-3 text-red-600" />
+                            <ChevronUp className="h-3.5 w-3.5 text-red-600 group-hover:scale-110 transition-transform duration-200" />
                           ) : (
-                            <ChevronDown className="h-3 w-3 text-red-600" />
+                            <ChevronDown className="h-3.5 w-3.5 text-red-600 group-hover:scale-110 transition-transform duration-200" />
                           )}
                         </button>
                       )}
@@ -432,28 +429,31 @@ export default function BarangayList() {
                 </div>
 
                 {/* Enhanced Actions */}
-                <div className="flex gap-2 pt-3 border-t border-gray-100">
+                <div className="flex gap-3 pt-4 border-t border-gray-100/60">
                   <button
                     onClick={() => navigate(`/barangays/${barangay.id}`)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 transform hover:scale-105 transition-all duration-200 shadow-sm hover:shadow-md"
+                    className="flex-1 relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white font-semibold rounded-xl px-5 py-3 hover:shadow-lg hover:shadow-blue-500/25 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 group"
                   >
-                    <span>View Details</span>
-                    <MapPin className="h-4 w-4" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                    <div className="flex items-center justify-center gap-2 relative z-10">
+                      <span className="drop-shadow-sm">View Details</span>
+                      <MapPin className="h-4 w-4 drop-shadow-sm group-hover:rotate-12 transition-transform duration-200" />
+                    </div>
                   </button>
-                  <div className="flex gap-1">
+                  <div className="flex gap-2">
                     <button
                       onClick={() => navigate(`/barangays/${barangay.id}/edit`)}
-                      className="p-2.5 bg-gradient-to-br from-gray-50 to-gray-100 text-gray-600 hover:text-blue-600 hover:from-blue-50 hover:to-blue-100 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105"
+                      className="p-3 bg-gradient-to-br from-amber-50 to-orange-100 text-amber-700 hover:text-amber-900 hover:from-amber-100 hover:to-orange-200 border border-amber-200/40 rounded-xl transition-all duration-200 shadow-sm hover:shadow-lg hover:shadow-amber-500/25 transform hover:scale-110 active:scale-95 group"
                       title="Edit post"
                     >
-                      <Edit className="h-4 w-4" />
+                      <Edit className="h-4.5 w-4.5 group-hover:rotate-12 transition-transform duration-200" />
                     </button>
                     <button
                       onClick={() => handleDelete(barangay.id)}
-                      className="p-2.5 bg-gradient-to-br from-gray-50 to-gray-100 text-gray-600 hover:text-red-600 hover:from-red-50 hover:to-red-100 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105"
+                      className="p-3 bg-gradient-to-br from-red-50 to-rose-100 text-red-700 hover:text-red-900 hover:from-red-100 hover:to-rose-200 border border-red-200/40 rounded-xl transition-all duration-200 shadow-sm hover:shadow-lg hover:shadow-red-500/25 transform hover:scale-110 active:scale-95 group"
                       title="Delete post"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4.5 w-4.5 group-hover:scale-110 transition-transform duration-200" />
                     </button>
                   </div>
                 </div>
@@ -463,7 +463,7 @@ export default function BarangayList() {
         </div>
       ) : (
         /* Enhanced List View */
-        <div className="bg-white rounded-xl shadow-lg border border-gray-100/80 overflow-hidden">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/60 overflow-hidden hover:shadow-xl transition-all duration-300">
           <div className="bg-gradient-to-r from-gray-50 to-blue-50/30 border-b border-gray-100/80">
             <div className="px-6 py-4">
               <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
@@ -504,13 +504,13 @@ export default function BarangayList() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-50">
               {filteredBarangays.map((barangay) => (
-                <tr key={barangay.id} className="group hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-transparent transition-colors duration-200">
+                <tr key={barangay.id} className="group hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-transparent transition-all duration-200 hover:shadow-sm">
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${
+                      <div className={`p-2 rounded-lg transition-all duration-200 ${
                         barangay.status === "ACTIVE"
-                          ? "bg-emerald-100"
-                          : "bg-gray-100"
+                          ? "bg-emerald-100 group-hover:bg-emerald-200"
+                          : "bg-gray-100 group-hover:bg-gray-200"
                       }`}>
                         <MapPin className={`h-4 w-4 ${
                           barangay.status === "ACTIVE"
@@ -579,43 +579,39 @@ export default function BarangayList() {
                     </div>
                   </td>
                   <td className="px-6 py-5">
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-full shadow-sm ${
-                        barangay.status === "ACTIVE"
-                          ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
-                          : "bg-gray-100 text-gray-700 border border-gray-200"
-                      }`}
-                    >
-                      <div className={`h-2 w-2 rounded-full ${
-                        barangay.status === "ACTIVE"
-                          ? "bg-emerald-500"
-                          : "bg-gray-400"
-                      }`}></div>
-                      {barangay.status}
-                    </span>
+                    <div className="flex justify-center">
+                      <div
+                        className={`h-3 w-3 rounded-full ${
+                          barangay.status === "ACTIVE"
+                            ? "bg-emerald-500"
+                            : "bg-gray-400"
+                        }`}
+                        title={barangay.status}
+                      ></div>
+                    </div>
                   </td>
                   <td className="px-6 py-5 text-right">
                     <div className="flex items-center justify-end gap-1">
                       <button
                         onClick={() => navigate(`/barangays/${barangay.id}`)}
-                        className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all duration-200 transform hover:scale-105"
+                        className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 group"
                         title="View Details"
                       >
-                        <MapPin className="h-4 w-4" />
+                        <MapPin className="h-4 w-4 group-hover:rotate-12 transition-transform duration-200" />
                       </button>
                       <button
                         onClick={() => navigate(`/barangays/${barangay.id}/edit`)}
-                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 transform hover:scale-105"
+                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 group"
                         title="Edit Post"
                       >
-                        <Edit className="h-4 w-4" />
+                        <Edit className="h-4 w-4 group-hover:rotate-12 transition-transform duration-200" />
                       </button>
                       <button
                         onClick={() => handleDelete(barangay.id)}
-                        className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 transform hover:scale-105"
+                        className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 group"
                         title="Delete Post"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
                       </button>
                     </div>
                   </td>
@@ -626,22 +622,47 @@ export default function BarangayList() {
         </div>
       )}
 
-      {/* Empty State */}
+      {/* Enhanced Empty State */}
       {filteredBarangays.length === 0 && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-          <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No posts found</h3>
-          <p className="text-gray-600 mb-4">
-            {searchQuery ? "Try adjusting your search" : "Get started by adding a new emergency response post"}
+        <div className="bg-gradient-to-br from-white via-gray-50/50 to-blue-50/30 rounded-2xl shadow-lg border border-gray-200/60 p-12 text-center hover:shadow-xl transition-all duration-300">
+          <div className="relative mb-6">
+            <div className="h-20 w-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+              <MapPin className="h-10 w-10 text-blue-600" />
+            </div>
+            <div className="absolute -top-2 -right-2 h-8 w-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+              <Plus className="h-4 w-4 text-white" />
+            </div>
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-3">
+            {searchQuery ? "No posts match your search" : "No emergency response posts yet"}
+          </h3>
+          <p className="text-gray-600 mb-6 max-w-md mx-auto leading-relaxed">
+            {searchQuery
+              ? "Try adjusting your search terms or filters to find what you're looking for."
+              : "Get started by creating your first emergency response post to help coordinate disaster response efforts in your community."
+            }
           </p>
           {!searchQuery && (
-            <Button onClick={() => navigate("/barangays/new")}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Post
+            <Button
+              onClick={() => navigate("/barangays/new")}
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Create First Post
+            </Button>
+          )}
+          {searchQuery && (
+            <Button
+              variant="outline"
+              onClick={() => setSearchQuery("")}
+              className="rounded-xl px-6 py-3 border-2 hover:bg-gray-50 transition-all duration-200"
+            >
+              Clear Search
             </Button>
           )}
         </div>
       )}
+      </div>
     </div>
   );
 }

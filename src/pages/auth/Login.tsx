@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { API_URL, STORAGE_KEYS } from "@/lib/constants";
 import {
   AlertCircle,
   Loader2,
@@ -24,6 +25,17 @@ export default function LoginPage() {
   const [password, setPassword] = useState("Admin@123");
   const [showPassword, setShowPassword] = useState(false);
   const [touched, setTouched] = useState({ email: false, password: false });
+
+  // Debug: Check current configuration on component mount
+  useEffect(() => {
+    console.log('🔧 Login page loaded with configuration:');
+    console.log('- API_URL:', API_URL);
+    console.log('- Current localStorage tokens:', {
+      accessToken: localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN),
+      refreshToken: localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN),
+      user: localStorage.getItem(STORAGE_KEYS.USER),
+    });
+  }, []);
 
   const emailError =
     touched.email && !email
@@ -50,8 +62,11 @@ export default function LoginPage() {
     }
 
     try {
+      console.log('🔐 Form submission - calling login with:', { email, password: '***' });
       await login({ email, password });
-    } catch {
+      console.log('🔐 Login successful');
+    } catch (error) {
+      console.log('🔐 Login failed:', error);
       // The store will capture and set the error
     }
   };

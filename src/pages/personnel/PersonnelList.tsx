@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { PersonnelFilters as FilterComponent } from "@/components/personnel/PersonnelFilters";
 import { PersonnelTable } from "@/components/personnel/PersonnelTable";
 import { PersonnelGrid } from "@/components/personnel/PersonnelGrid";
-import { IncidentPagination } from "@/components/incidents/IncidentPagination";
 
 export default function PersonnelListPage() {
   const navigate = useNavigate();
@@ -109,13 +108,10 @@ export default function PersonnelListPage() {
     setSelectedIds(newSelected);
   };
 
-  const handlePageChange = (page: number) => {
-    setFilters((prev) => ({ ...prev, page }));
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Modern Blue Header Board */}
+    <div className="px-4 lg:px-6 xl:px-8">
+      <div className="space-y-6">
+        {/* Modern Blue Header Board */}
       <div className="relative overflow-hidden bg-linear-to-br from-blue-600 via-blue-700 to-blue-800 rounded-2xl shadow-2xl">
         {/* Decorative elements */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.1),_transparent_50%),_radial-gradient(circle_at_bottom,_rgba(99,102,241,0.1),_transparent_50%)]" />
@@ -338,11 +334,7 @@ export default function PersonnelListPage() {
           onToggleSelect={toggleSelect}
         />
       )}
-
-      {/* Pagination */}
-      {!isLoading && personnel.length > 0 && (
-        <IncidentPagination pagination={pagination} onPageChange={handlePageChange} />
-      )}
+      </div>
     </div>
   );
 }

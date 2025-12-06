@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { incidentService } from "@/services/incident.service";
 import { reportsService } from "@/services/reports.service";
+import { INCIDENT_STATUS } from "@/lib/constants";
 import type { Incident, IncidentFilters } from "@/types/incident.types";
 import ReportsHeader from "./ReportsHeader";
 import ReportsFilters from "./ReportsFilters";
@@ -13,6 +14,11 @@ import ReportsIncidentModal from "./ReportsIncidentModal";
 
 type ArrayFilterKey = "status" | "priority" | "type" | "barangayId";
 type BooleanFilterKey = "hasPhotos" | "hasAssignedPersonnel";
+
+// Default statuses for reports (excludes SPAM)
+const DEFAULT_REPORT_STATUSES = Object.values(INCIDENT_STATUS).filter(
+  status => status !== INCIDENT_STATUS.SPAM
+);
 
 export default function Reports() {
   const navigate = useNavigate();
@@ -38,7 +44,7 @@ export default function Reports() {
   
   // 5W1H Filters - initialize without dates first
   const [filters, setFilters] = useState<IncidentFilters>({
-    status: [],
+    status: DEFAULT_REPORT_STATUSES,
     priority: [],
     type: [],
     barangayId: [],
@@ -51,8 +57,10 @@ export default function Reports() {
     setIsLoadingIncidents(true);
     try {
       // Create a combined filter object with all current filter values including current dates
+      // Only fetch RESOLVED incidents for reports
       const combinedFilters: IncidentFilters = {
         ...filters,
+        status: ['RESOLVED'], // Only show resolved incidents in reports
         startDate,
         endDate,
         search: searchQuery.trim() || undefined,
@@ -124,7 +132,7 @@ export default function Reports() {
 
   const clearFilters = () => {
     setFilters({
-      status: [],
+      status: DEFAULT_REPORT_STATUSES,
       priority: [],
       type: [],
       barangayId: [],
@@ -230,7 +238,8 @@ export default function Reports() {
 
 
   return (
-    <div className="space-y-6">
+    <div className="px-4 lg:px-6 xl:px-8">
+      <div className="space-y-6">
       <ReportsHeader
         isGenerating={isGenerating}
         generatePDF={generatePDF}
@@ -272,6 +281,7 @@ export default function Reports() {
         navigate={navigate}
         showIncidentModal={showIncidentModal}
       />
+      </div>
     </div>
   );
 }

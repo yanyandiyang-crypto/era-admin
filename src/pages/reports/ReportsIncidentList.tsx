@@ -189,127 +189,136 @@ export default function ReportsIncidentList({
           : 'opacity-100'
       }`}>
 
-        {/* Modern gradient overlay */}
+        {/* Enhanced gradient overlay with animated elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-slate-100/30 rounded-xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-700" />
+        <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-emerald-400/10 to-cyan-400/10 rounded-full -ml-8 -mb-8 group-hover:scale-125 transition-transform duration-500" />
 
-        {/* Status indicators with colored border elements - Enhanced visibility */}
+        {/* Status indicators with enhanced colored border elements */}
         {/* Top border indicator */}
         <div className={`absolute top-0 left-0 right-0 h-2 z-10 ${
-          incident.status === 'RESOLVED' ? 'bg-green-500' :
-          incident.status === 'CLOSED' ? 'bg-gray-500' :
-          incident.priority === 'CRITICAL' ? 'bg-red-500' :
-          incident.priority === 'HIGH' ? 'bg-orange-500' :
-          incident.status === 'VERIFIED' ? 'bg-blue-500' :
-          incident.status === 'ACKNOWLEDGED' ? 'bg-indigo-500' :
-          incident.status === 'DISPATCHED' ? 'bg-purple-500' :
-          incident.status === 'RESPONDING' || incident.status === 'IN_PROGRESS' ? 'bg-orange-500' :
-          incident.status === 'ARRIVED' ? 'bg-red-500' :
-          incident.status === 'PENDING_RESOLVE' ? 'bg-amber-500' :
-          incident.status === 'PENDING_VERIFICATION' ? 'bg-yellow-500' :
-          incident.status === 'REPORTED' ? 'bg-gray-500' :
-          incident.status === 'CANCELLED' || incident.status === 'SPAM' ? 'bg-red-500' :
-          'bg-gray-400'
+          incident.status === 'RESOLVED' ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
+          incident.status === 'CLOSED' ? 'bg-gradient-to-r from-gray-500 to-slate-500' :
+          incident.priority === 'CRITICAL' ? 'bg-gradient-to-r from-red-500 to-red-600' :
+          incident.priority === 'HIGH' ? 'bg-gradient-to-r from-orange-500 to-red-500' :
+          incident.status === 'VERIFIED' ? 'bg-gradient-to-r from-blue-500 to-indigo-500' :
+          incident.status === 'ACKNOWLEDGED' ? 'bg-gradient-to-r from-indigo-500 to-purple-500' :
+          incident.status === 'DISPATCHED' ? 'bg-gradient-to-r from-purple-500 to-violet-500' :
+          incident.status === 'RESPONDING' || incident.status === 'IN_PROGRESS' ? 'bg-gradient-to-r from-orange-500 to-amber-500' :
+          incident.status === 'ARRIVED' ? 'bg-gradient-to-r from-red-500 to-rose-500' :
+          incident.status === 'PENDING_RESOLVE' ? 'bg-gradient-to-r from-amber-500 to-yellow-500' :
+          incident.status === 'PENDING_VERIFICATION' ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
+          incident.status === 'REPORTED' ? 'bg-gradient-to-r from-gray-500 to-slate-500' :
+          incident.status === 'CANCELLED' || incident.status === 'SPAM' ? 'bg-gradient-to-r from-red-500 to-red-600' :
+          'bg-gradient-to-r from-gray-400 to-gray-500'
         }`} />
 
         {/* Left border indicator */}
         <div className={`absolute left-0 top-0 bottom-0 w-1 ${
-          incident.status === 'RESOLVED' ? 'bg-green-500' :
-          incident.status === 'CLOSED' ? 'bg-gray-500' :
-          incident.priority === 'CRITICAL' ? 'bg-red-500' :
-          incident.priority === 'HIGH' ? 'bg-orange-500' :
-          incident.status === 'VERIFIED' ? 'bg-blue-500' :
-          incident.status === 'ACKNOWLEDGED' ? 'bg-indigo-500' :
-          incident.status === 'DISPATCHED' ? 'bg-purple-500' :
-          incident.status === 'RESPONDING' || incident.status === 'IN_PROGRESS' ? 'bg-orange-500' :
-          incident.status === 'ARRIVED' ? 'bg-red-500' :
-          incident.status === 'PENDING_RESOLVE' ? 'bg-amber-500' :
-          incident.status === 'PENDING_VERIFICATION' ? 'bg-yellow-500' :
-          incident.status === 'REPORTED' ? 'bg-gray-500' :
-          incident.status === 'CANCELLED' || incident.status === 'SPAM' ? 'bg-red-500' :
-          'bg-gray-400'
+          incident.status === 'RESOLVED' ? 'bg-gradient-to-b from-green-500 to-emerald-500' :
+          incident.status === 'CLOSED' ? 'bg-gradient-to-b from-gray-500 to-slate-500' :
+          incident.priority === 'CRITICAL' ? 'bg-gradient-to-b from-red-500 to-red-600' :
+          incident.priority === 'HIGH' ? 'bg-gradient-to-b from-orange-500 to-red-500' :
+          incident.status === 'VERIFIED' ? 'bg-gradient-to-b from-blue-500 to-indigo-500' :
+          incident.status === 'ACKNOWLEDGED' ? 'bg-gradient-to-b from-indigo-500 to-purple-500' :
+          incident.status === 'DISPATCHED' ? 'bg-gradient-to-b from-purple-500 to-violet-500' :
+          incident.status === 'RESPONDING' || incident.status === 'IN_PROGRESS' ? 'bg-gradient-to-b from-orange-500 to-amber-500' :
+          incident.status === 'ARRIVED' ? 'bg-gradient-to-b from-red-500 to-rose-500' :
+          incident.status === 'PENDING_RESOLVE' ? 'bg-gradient-to-b from-amber-500 to-yellow-500' :
+          incident.status === 'PENDING_VERIFICATION' ? 'bg-gradient-to-b from-yellow-500 to-orange-500' :
+          incident.status === 'REPORTED' ? 'bg-gradient-to-b from-gray-500 to-slate-500' :
+          incident.status === 'CANCELLED' || incident.status === 'SPAM' ? 'bg-gradient-to-b from-red-500 to-red-600' :
+          'bg-gradient-to-b from-gray-400 to-gray-500'
         }`} />
 
         {/* Right border indicator */}
         <div className={`absolute right-0 top-0 bottom-0 w-1 ${
-          incident.status === 'RESOLVED' ? 'bg-green-500' :
-          incident.status === 'CLOSED' ? 'bg-gray-500' :
-          incident.priority === 'CRITICAL' ? 'bg-red-500' :
-          incident.priority === 'HIGH' ? 'bg-orange-500' :
-          incident.status === 'VERIFIED' ? 'bg-blue-500' :
-          incident.status === 'ACKNOWLEDGED' ? 'bg-indigo-500' :
-          incident.status === 'DISPATCHED' ? 'bg-purple-500' :
-          incident.status === 'RESPONDING' || incident.status === 'IN_PROGRESS' ? 'bg-orange-500' :
-          incident.status === 'ARRIVED' ? 'bg-red-500' :
-          incident.status === 'PENDING_RESOLVE' ? 'bg-amber-500' :
-          incident.status === 'PENDING_VERIFICATION' ? 'bg-yellow-500' :
-          incident.status === 'REPORTED' ? 'bg-gray-500' :
-          incident.status === 'CANCELLED' || incident.status === 'SPAM' ? 'bg-red-500' :
-          'bg-gray-400'
+          incident.status === 'RESOLVED' ? 'bg-gradient-to-b from-green-500 to-emerald-500' :
+          incident.status === 'CLOSED' ? 'bg-gradient-to-b from-gray-500 to-slate-500' :
+          incident.priority === 'CRITICAL' ? 'bg-gradient-to-b from-red-500 to-red-600' :
+          incident.priority === 'HIGH' ? 'bg-gradient-to-b from-orange-500 to-red-500' :
+          incident.status === 'VERIFIED' ? 'bg-gradient-to-b from-blue-500 to-indigo-500' :
+          incident.status === 'ACKNOWLEDGED' ? 'bg-gradient-to-b from-indigo-500 to-purple-500' :
+          incident.status === 'DISPATCHED' ? 'bg-gradient-to-b from-purple-500 to-violet-500' :
+          incident.status === 'RESPONDING' || incident.status === 'IN_PROGRESS' ? 'bg-gradient-to-b from-orange-500 to-amber-500' :
+          incident.status === 'ARRIVED' ? 'bg-gradient-to-b from-red-500 to-rose-500' :
+          incident.status === 'PENDING_RESOLVE' ? 'bg-gradient-to-b from-amber-500 to-yellow-500' :
+          incident.status === 'PENDING_VERIFICATION' ? 'bg-gradient-to-b from-yellow-500 to-orange-500' :
+          incident.status === 'REPORTED' ? 'bg-gradient-to-b from-gray-500 to-slate-500' :
+          incident.status === 'CANCELLED' || incident.status === 'SPAM' ? 'bg-gradient-to-b from-red-500 to-red-600' :
+          'bg-gradient-to-b from-gray-400 to-gray-500'
         }`} />
 
         {/* Bottom border indicator */}
         <div className={`absolute bottom-0 left-0 right-0 h-1 rounded-b-xl ${
-          incident.status === 'RESOLVED' ? 'bg-green-500' :
-          incident.status === 'CLOSED' ? 'bg-gray-500' :
-          incident.priority === 'CRITICAL' ? 'bg-red-500' :
-          incident.priority === 'HIGH' ? 'bg-orange-500' :
-          incident.status === 'VERIFIED' ? 'bg-blue-500' :
-          incident.status === 'ACKNOWLEDGED' ? 'bg-indigo-500' :
-          incident.status === 'DISPATCHED' ? 'bg-purple-500' :
-          incident.status === 'RESPONDING' || incident.status === 'IN_PROGRESS' ? 'bg-orange-500' :
-          incident.status === 'ARRIVED' ? 'bg-red-500' :
-          incident.status === 'PENDING_RESOLVE' ? 'bg-amber-500' :
-          incident.status === 'PENDING_VERIFICATION' ? 'bg-yellow-500' :
-          incident.status === 'REPORTED' ? 'bg-gray-500' :
-          incident.status === 'CANCELLED' || incident.status === 'SPAM' ? 'bg-red-500' :
-          'bg-gray-400'
+          incident.status === 'RESOLVED' ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
+          incident.status === 'CLOSED' ? 'bg-gradient-to-r from-gray-500 to-slate-500' :
+          incident.priority === 'CRITICAL' ? 'bg-gradient-to-r from-red-500 to-red-600' :
+          incident.priority === 'HIGH' ? 'bg-gradient-to-r from-orange-500 to-red-500' :
+          incident.status === 'VERIFIED' ? 'bg-gradient-to-r from-blue-500 to-indigo-500' :
+          incident.status === 'ACKNOWLEDGED' ? 'bg-gradient-to-r from-indigo-500 to-purple-500' :
+          incident.status === 'DISPATCHED' ? 'bg-gradient-to-r from-purple-500 to-violet-500' :
+          incident.status === 'RESPONDING' || incident.status === 'IN_PROGRESS' ? 'bg-gradient-to-r from-orange-500 to-amber-500' :
+          incident.status === 'ARRIVED' ? 'bg-gradient-to-r from-red-500 to-rose-500' :
+          incident.status === 'PENDING_RESOLVE' ? 'bg-gradient-to-r from-amber-500 to-yellow-500' :
+          incident.status === 'PENDING_VERIFICATION' ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
+          incident.status === 'REPORTED' ? 'bg-gradient-to-r from-gray-500 to-slate-500' :
+          incident.status === 'CANCELLED' || incident.status === 'SPAM' ? 'bg-gradient-to-r from-red-500 to-red-600' :
+          'bg-gradient-to-r from-gray-400 to-gray-500'
         }`} />
 
-        <CardHeader className="relative pb-5 z-20">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-start gap-4 flex-1 min-w-0">
-              {/* Enhanced incident type icon with modern styling */}
-              <div className={`flex-shrink-0 mt-1 p-1 rounded-xl transition-all duration-300 ${
-                incident.type === 'FIRE' ? 'bg-gradient-to-br from-red-50 to-red-100 shadow-sm ring-1 ring-red-200/50' :
-                incident.type === 'MEDICAL' ? 'bg-gradient-to-br from-blue-50 to-blue-100 shadow-sm ring-1 ring-blue-200/50' :
-                incident.type === 'ACCIDENT' ? 'bg-gradient-to-br from-yellow-50 to-amber-100 shadow-sm ring-1 ring-yellow-200/50' :
-                incident.type === 'CRIME' ? 'bg-gradient-to-br from-purple-50 to-purple-100 shadow-sm ring-1 ring-purple-200/50' :
-                'bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm ring-1 ring-gray-200/50'
+        <CardHeader className="relative pb-3 z-20">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3 flex-1 min-w-0">
+              {/* Enhanced incident type icon with premium styling */}
+              <div className={`flex-shrink-0 mt-0.5 p-0.5 rounded-lg transition-all duration-300 group-hover:scale-110 ${
+                incident.type === 'FIRE' ? 'bg-gradient-to-br from-red-50 to-red-100 shadow-md ring-1 ring-red-200/50 hover:ring-red-300/70' :
+                incident.type === 'MEDICAL' ? 'bg-gradient-to-br from-blue-50 to-blue-100 shadow-md ring-1 ring-blue-200/50 hover:ring-blue-300/70' :
+                incident.type === 'ACCIDENT' ? 'bg-gradient-to-br from-yellow-50 to-amber-100 shadow-md ring-1 ring-yellow-200/50 hover:ring-yellow-300/70' :
+                incident.type === 'CRIME' ? 'bg-gradient-to-br from-purple-50 to-purple-100 shadow-md ring-1 ring-purple-200/50 hover:ring-purple-300/70' :
+                incident.type === 'FLOOD' ? 'bg-gradient-to-br from-cyan-50 to-blue-100 shadow-md ring-1 ring-cyan-200/50 hover:ring-cyan-300/70' :
+                incident.type === 'NATURAL_DISASTER' ? 'bg-gradient-to-br from-orange-50 to-red-100 shadow-md ring-1 ring-orange-200/50 hover:ring-orange-300/70' :
+                'bg-gradient-to-br from-gray-50 to-gray-100 shadow-md ring-1 ring-gray-200/50 hover:ring-gray-300/70'
               }`}>
-                <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${
-                  incident.type === 'FIRE' ? 'bg-red-100' :
-                  incident.type === 'MEDICAL' ? 'bg-blue-100' :
-                  incident.type === 'ACCIDENT' ? 'bg-yellow-100' :
-                  incident.type === 'CRIME' ? 'bg-purple-100' :
-                  'bg-gray-100'
+                <div className={`w-5 h-5 rounded-md flex items-center justify-center transition-all duration-300 ${
+                  incident.type === 'FIRE' ? 'bg-red-100 group-hover:bg-red-200' :
+                  incident.type === 'MEDICAL' ? 'bg-blue-100 group-hover:bg-blue-200' :
+                  incident.type === 'ACCIDENT' ? 'bg-yellow-100 group-hover:bg-amber-200' :
+                  incident.type === 'CRIME' ? 'bg-purple-100 group-hover:bg-purple-200' :
+                  incident.type === 'FLOOD' ? 'bg-cyan-100 group-hover:bg-blue-200' :
+                  incident.type === 'NATURAL_DISASTER' ? 'bg-orange-100 group-hover:bg-red-200' :
+                  'bg-gray-100 group-hover:bg-gray-200'
                 }`}>
-                  <TypeIcon className={`w-4 h-4 ${
-                    incident.type === 'FIRE' ? 'text-red-600' :
-                    incident.type === 'MEDICAL' ? 'text-blue-600' :
-                    incident.type === 'ACCIDENT' ? 'text-yellow-600' :
-                    incident.type === 'CRIME' ? 'text-purple-600' :
-                    'text-gray-600'
+                  <TypeIcon className={`w-3.5 h-3.5 transition-all duration-300 ${
+                    incident.type === 'FIRE' ? 'text-red-600 group-hover:text-red-700' :
+                    incident.type === 'MEDICAL' ? 'text-blue-600 group-hover:text-blue-700' :
+                    incident.type === 'ACCIDENT' ? 'text-yellow-600 group-hover:text-amber-700' :
+                    incident.type === 'CRIME' ? 'text-purple-600 group-hover:text-purple-700' :
+                    incident.type === 'FLOOD' ? 'text-cyan-600 group-hover:text-blue-700' :
+                    incident.type === 'NATURAL_DISASTER' ? 'text-orange-600 group-hover:text-red-700' :
+                    'text-gray-600 group-hover:text-gray-700'
                   }`} />
                 </div>
               </div>
 
               <div className="flex-1 min-w-0 space-y-1">
-                {/* Modern title with gradient effect on hover */}
-                <h4 className="font-bold text-slate-900 text-lg leading-tight group-hover:bg-gradient-to-r group-hover:from-blue-700 group-hover:to-indigo-700 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+                {/* Premium title with enhanced gradient effect */}
+                <h4 className="font-bold text-slate-900 text-base leading-tight group-hover:bg-gradient-to-r group-hover:from-blue-700 group-hover:to-indigo-700 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500 line-clamp-2">
                   {incident.title}
                 </h4>
 
                 <div className="flex items-center gap-3">
-                  {/* Sleek tracking number */}
-                  <div className="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs font-mono rounded-md border border-slate-200">
+                  {/* Premium tracking number badge */}
+                  <div className="px-2 py-0.5 bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 text-xs font-mono rounded-md border border-slate-300/60 shadow-sm font-semibold tracking-wide">
                     {incident.trackingNumber}
                   </div>
 
-                  {/* Enhanced personnel badge */}
+                  {/* Enhanced personnel badge with better styling */}
                   {assignedPersonnelCount > 0 && (
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r from-indigo-50 to-blue-50 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200/60 shadow-sm">
+                    <div className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-indigo-50 to-blue-50 text-indigo-700 text-xs font-bold rounded-lg border border-indigo-200/60 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
                       <Users className="w-3 h-3" />
-                      {assignedPersonnelCount}
+                      <span className="font-extrabold">{assignedPersonnelCount}</span>
+                      <span className="text-indigo-600 ml-0.5">assigned</span>
                     </div>
                   )}
                 </div>
@@ -318,92 +327,92 @@ export default function ReportsIncidentList({
 
             {/* Modernized badges with improved styling */}
             <div className="flex flex-col gap-2.5 flex-shrink-0">
-              <div className={`px-3 py-1.5 rounded-xl font-bold text-xs border-2 shadow-lg transition-all duration-300 ${
-                priorityConfig.label === 'Critical' ? 'bg-gradient-to-r from-red-500 to-red-600 text-white border-red-400 shadow-red-200 hover:shadow-red-300' :
-                priorityConfig.label === 'High' ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white border-orange-400 shadow-orange-200 hover:shadow-orange-300' :
-                priorityConfig.label === 'Medium' ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-slate-800 border-yellow-400 shadow-yellow-200 hover:shadow-yellow-300' :
-                'bg-gradient-to-r from-green-500 to-emerald-500 text-white border-green-400 shadow-green-200 hover:shadow-green-300'
+              <div className={`px-3 py-1.5 rounded-lg font-bold text-xs border-2 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
+                priorityConfig.label === 'Critical' ? 'bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white border-red-400/60 shadow-red-200/50 hover:shadow-red-300/70' :
+                priorityConfig.label === 'High' ? 'bg-gradient-to-r from-orange-500 via-red-500 to-red-600 text-white border-orange-400/60 shadow-orange-200/50 hover:shadow-orange-300/70' :
+                priorityConfig.label === 'Medium' ? 'bg-gradient-to-r from-yellow-500 via-yellow-600 to-amber-600 text-slate-900 border-yellow-400/60 shadow-yellow-200/50 hover:shadow-yellow-300/70' :
+                'bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 text-white border-green-400/60 shadow-green-200/50 hover:shadow-green-300/70'
               }`}>
-                <PriorityIcon className="w-3.5 h-3.5 inline mr-1.5" />
+                <PriorityIcon className="w-3 h-3 inline mr-1.5 drop-shadow-sm" />
                 {priorityConfig.label}
               </div>
 
-              <div className={`px-3 py-1 rounded-lg font-semibold text-xs border border-opacity-60 ${
-                statusConfig.color} shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105`}>
-                <StatusIcon className="w-3 h-3 inline mr-1.5" />
+              <div className={`px-2.5 py-1 rounded-md font-semibold text-xs border border-opacity-60 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 ${
+                statusConfig.color} border-current`}>
+                <StatusIcon className="w-3 h-3 inline mr-1" />
                 {statusConfig.label}
               </div>
             </div>
           </div>
         </CardHeader>
 
-        <CardContent className="relative pt-0 px-6 z-20">
-          {/* Enhanced description with modern styling */}
-          <div className="mb-5">
-            <p className="text-sm text-slate-700 leading-relaxed line-clamp-2 group-hover:text-slate-800 transition-colors">
+        <CardContent className="relative pt-0 px-4 z-20">
+          {/* Premium description with enhanced styling */}
+          <div className="mb-3">
+            <p className="text-sm text-slate-700 leading-relaxed line-clamp-2 group-hover:text-slate-800 transition-all duration-300 group-hover:leading-loose">
               {incident.description}
             </p>
           </div>
 
-          {/* Modern incident details grid */}
-          <div className="space-y-3 bg-gradient-to-br from-slate-50/50 to-gray-50/50 rounded-xl p-4 border border-slate-200/60 shadow-inner">
+          {/* Premium incident details grid */}
+          <div className="space-y-2 bg-gradient-to-br from-slate-50/70 to-gray-50/70 rounded-lg p-3 border border-slate-200/60 shadow-inner backdrop-blur-sm">
             <div className="grid grid-cols-1 gap-3">
-              {/* Location with enhanced styling */}
-              <div className="flex items-center gap-3 p-2 rounded-lg bg-gradient-to-r from-red-50 to-rose-50 border border-red-100/60">
-                <div className="p-1.5 rounded-full bg-white shadow-sm border border-red-200/50">
+              {/* Location with premium styling */}
+              <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r from-red-50 to-rose-50 border border-red-100/60 hover:border-red-200/80 transition-all duration-300 hover:shadow-sm">
+                <div className="p-1.5 rounded-full bg-white shadow-md border border-red-200/50 hover:shadow-lg transition-all duration-300">
                   <MapPin className="w-3.5 h-3.5 text-red-600" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <span className="text-xs font-medium text-red-700 uppercase tracking-wide">Location</span>
-                  <p className="text-sm text-slate-700 truncate font-medium">{incident.address}</p>
+                  <span className="text-xs font-bold text-red-700 uppercase tracking-wider">Location</span>
+                  <p className="text-sm text-slate-700 truncate font-semibold">{incident.address}</p>
                 </div>
               </div>
 
-              {/* Reporter with enhanced styling */}
-              <div className="flex items-center gap-3 p-2 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/60">
-                <div className="p-1.5 rounded-full bg-white shadow-sm border border-blue-200/50">
+              {/* Reporter with premium styling */}
+              <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/60 hover:border-blue-200/80 transition-all duration-300 hover:shadow-sm">
+                <div className="p-1.5 rounded-full bg-white shadow-md border border-blue-200/50 hover:shadow-lg transition-all duration-300">
                   <User className="w-3.5 h-3.5 text-blue-600" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <span className="text-xs font-medium text-blue-700 uppercase tracking-wide">Reported By</span>
-                  <p className="text-sm text-slate-700 font-medium">{incident.reporterName || 'Anonymous'}</p>
+                  <span className="text-xs font-bold text-blue-700 uppercase tracking-wider">Reported By</span>
+                  <p className="text-sm text-slate-700 font-semibold">{incident.reporterName || 'Anonymous'}</p>
                 </div>
               </div>
             </div>
 
-            {/* Enhanced timestamp and response info */}
+            {/* Premium timestamp and response info */}
             <div className="flex items-center justify-between pt-2 border-t border-slate-200/60">
-              <div className="flex items-center gap-2 text-xs text-slate-600">
-                <Calendar className="w-3 h-3" />
+              <div className="flex items-center gap-1.5 text-xs text-slate-600">
+                <Calendar className="w-3 h-3 text-slate-500" />
                 <div>
-                  <span className="font-medium">{format(new Date(incident.reportedAt), 'MMM d, HH:mm')}</span>
-                  <span className="text-slate-500 ml-1">reported</span>
+                  <span className="font-semibold text-slate-700">{format(new Date(incident.reportedAt), 'MMM d, HH:mm')}</span>
+                  <span className="text-slate-500 ml-1 font-medium">reported</span>
                 </div>
               </div>
 
               {incident.responseTime && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 text-xs font-bold rounded-full border border-emerald-200 shadow-sm">
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 text-xs font-bold rounded-full border border-emerald-200 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
                   <Timer className="w-3 h-3" />
-                  <span>{incident.responseTime}min</span>
-                  <span className="text-emerald-600 ml-1">response</span>
+                  <span className="font-extrabold">{incident.responseTime}min</span>
+                  <span className="text-emerald-600 ml-1 font-semibold">response</span>
                 </div>
               )}
             </div>
 
-            {/* Photos indicator with modern styling */}
+            {/* Photos indicator with premium styling */}
             {incident.photos && incident.photos.length > 0 && (
-              <div className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-50 to-violet-50 border border-purple-100/60 rounded-lg">
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-purple-50 to-violet-50 border border-purple-100/60 rounded-lg hover:border-purple-200/80 transition-all duration-300 hover:shadow-sm">
                 <div className="flex items-center gap-1.5">
                   <FileText className="w-3.5 h-3.5 text-purple-600" />
-                  <span className="text-xs font-semibold text-purple-700">{incident.photos.length}</span>
-                  <span className="text-xs text-purple-600">photo{incident.photos.length > 1 ? 's' : ''}</span>
+                  <span className="text-sm font-bold text-purple-700">{incident.photos.length}</span>
+                  <span className="text-sm text-purple-600 font-medium">photo{incident.photos.length > 1 ? 's' : ''}</span>
                 </div>
               </div>
             )}
           </div>
         </CardContent>
 
-        <CardFooter className="relative pt-6 px-6 pb-6 z-20">
+        <CardFooter className="relative pt-4 px-4 pb-4 z-20">
           <Button
             variant="outline"
             size="sm"
@@ -412,10 +421,10 @@ export default function ReportsIncidentList({
               setSelectedIncident(incident);
               setShowIncidentModal(true);
             }}
-            className="w-full h-11 bg-blue-600 hover:bg-blue-700 border-2 border-blue-500 hover:border-blue-600 text-white hover:text-white font-semibold rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] group"
+            className="w-full h-10 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border-2 border-blue-500 hover:border-blue-600 text-white hover:text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group hover:-translate-y-0.5"
           >
             <Eye className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-200" />
-            <span className="font-medium">View Details</span>
+            <span className="font-semibold tracking-wide">View Details</span>
           </Button>
         </CardFooter>
       </Card>

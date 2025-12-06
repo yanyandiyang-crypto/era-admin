@@ -1,8 +1,12 @@
 // API Configuration
-console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
-console.log('VITE_WS_URL:', import.meta.env.VITE_WS_URL);
+console.log('🔧 Environment variables in constants.ts:', {
+  VITE_API_URL: import.meta.env.VITE_API_URL,
+  VITE_WS_URL: import.meta.env.VITE_WS_URL,
+  VITE_BASE_URL: import.meta.env.VITE_BASE_URL,
+});
+
 export const API_URL = import.meta.env.VITE_API_URL || "http://ec2-44-222-69-93.compute-1.amazonaws.com:3000/api/v1";
-export const WS_URL = import.meta.env.VITE_WS_URL || "ws://ec2-44-222-69-93.compute-1.amazonaws.com:3000";
+export const WS_URL = import.meta.env.VITE_WS_URL || "http://ec2-44-222-69-93.compute-1.amazonaws.com:3000";
 export const BASE_URL = import.meta.env.VITE_BASE_URL || "http://ec2-44-222-69-93.compute-1.amazonaws.com:3000";
 
 // Helper function to get full image URL
